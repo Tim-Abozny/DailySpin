@@ -1,4 +1,4 @@
-﻿using DailySpin.Website.Models;
+﻿using DailySpin.ViewModel.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 

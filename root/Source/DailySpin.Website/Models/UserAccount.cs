@@ -1,17 +1,13 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Identity;
+using System.ComponentModel.DataAnnotations;
 
 namespace DailySpin.Website.Models
 {
-    public class UserAccount
+    public class UserAccount : IdentityUser
     {
-        [Key]
-        public int Id { get; set; }
         public string Name { get; set; }
-        public string Email { get; set; }
-        public string Password { get; set; }
-        public string PasswordConfirmed { get; set; }
-        public int Balance { get; set; }
+        public long Balance { get; set; }
         public string Image { get; set; }
-        
+
     }
 }

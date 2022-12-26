@@ -1,13 +1,15 @@
-﻿namespace DailySpin.Website.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace DailySpin.Website.Models
 {
     public class BetsGlass
     {
-        public int Id { get; set; }
-        public string Name { get; set; }
-        public string Image { get; set; }
-        public int BetMultiply { get; set; }
-        public int BetsCount { get; set; }
-        public int TotalBetSum { get; set; }
-        public List <UserAccount> Bets { get; set; } // is it correct... ?
+        [Key]
+        public Guid Id { get; set; }
+        public string GlassImage { get; set; }
+        public ushort BetMultiply { get; set; }
+        public uint BetsCount { get; set; }
+        public ulong TotalBetSum { get; set; }
+        public List <Bet> Bets { get; set; }
     }
 }
