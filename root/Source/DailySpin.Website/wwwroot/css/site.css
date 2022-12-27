@@ -28,6 +28,19 @@ body {
     font-family: "Aleo";
 }
 
+main {
+    color: #DDE119;
+    background-color: #0c111d;
+    font-family: "Aleo";
+}
+
+input.form-control, input.form-control.valid, input.form-control.input-validation-error, input.form-floating, input.form-control:focus {
+    color: #DDE119;
+    font: #DDE119;
+    background-color: #0c111d;
+    font-family: "Aleo";
+}
+
 .container {
     background-color: #0c111d;
 }
@@ -40,11 +53,11 @@ a.navbar-brand {
     letter-spacing: 2px;
 }
 
-    a.navbar-brand:hover {
-        text-shadow: 
-            0 0 10px  #DDE119,
-            0 0 20px #DDE119;
-    }
+a.navbar-brand:hover {
+    text-shadow: 
+       0 0 10px  #DDE119,
+       0 0 20px #DDE119;
+}
 
 a.nav-link {
     color: #DDE119;
@@ -54,6 +67,20 @@ a.nav-link {
     font-size: 20px;
     letter-spacing: 1px;
     margin-right: 15px;
+    margin-top: auto;
+    margin-bottom:auto;
+}
+
+.balance-user {
+    color: #DDE119;
+    background-color: #2C2B4D;
+    border-radius: 15px;
+    font-weight: 700;
+    font-size: 20px;
+    letter-spacing: 1px;
+    margin-right: 15px;
+    margin-top: auto;
+    margin-bottom: auto;
 }
 
 .navbar-collapse {

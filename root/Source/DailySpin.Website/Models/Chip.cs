@@ -7,7 +7,7 @@ namespace DailySpin.Website.Models
     {
         [Key]
         public Guid Id { get; set; }
-        public string Image { get; set; }
+        public byte[] Image { get; set; }
         public ChipColor ColorType { get; set; }
         public bool WinChip { get; set; }
     }
