@@ -19,6 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\DailySpin.Logic\DailySpin.Logic.csproj" />
     <ProjectReference Include="..\DailySpin.ViewModel\DailySpin.ViewModel.csproj" />
   </ItemGroup>
 
@@ -26,10 +27,6 @@
     <Content Update="wwwroot\img\avatarImg.jpg">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Content>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Migrations\" />
   </ItemGroup>
 
 </Project>

@@ -6,4 +6,9 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\DailySpin.DataProvider\DailySpin.DataProvider.csproj" />
+    <ProjectReference Include="..\DailySpin.ViewModel\DailySpin.ViewModel.csproj" />
+  </ItemGroup>
+
 </Project>

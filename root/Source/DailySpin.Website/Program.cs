@@ -1,4 +1,4 @@
-using DailySpin.Website.Data;
+using DailySpin.DataProvider.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 
