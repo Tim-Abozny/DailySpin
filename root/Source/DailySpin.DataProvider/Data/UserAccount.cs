@@ -5,9 +5,12 @@ using System.Security.Claims;
 
 namespace DailySpin.DataProvider.Data
 {
-    public class UserAccount : IdentityUser
+    public class UserAccount
     {
+        public Guid Id { get; set; }
         public string DisplayName { get; set; }
+        public string Email { get; set; }
+        public string Password { get; set; }
         public long Balance { get; set; }
         public byte[]? Image { get; set; }
         public Role Role { get; set; }

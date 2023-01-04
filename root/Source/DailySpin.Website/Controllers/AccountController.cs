@@ -1,9 +1,9 @@
-﻿using DailySpin.Logic.Services;
-using Microsoft.AspNetCore.Authentication.Cookies;
+﻿using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using DailySpin.ViewModel.ViewModels;
+using DailySpin.Logic.Interfaces;
 
 namespace DailySpin.Website.Controllers
 {
@@ -25,7 +25,7 @@ namespace DailySpin.Website.Controllers
             if (ModelState.IsValid)
             {
                 var response = await _accountService.Register(model);
-                if (response.StatusCode == Domain.Enum.StatusCode.OK)
+                if (response.StatusCode == DataProvider.Enums.StatusCode.OK)
                 {
                     await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
                         new ClaimsPrincipal(response.Data));
@@ -46,7 +46,7 @@ namespace DailySpin.Website.Controllers
             if (ModelState.IsValid)
             {
                 var response = await _accountService.Login(model);
-                if (response.StatusCode == DailySpin.DataProvider.Enums.StatusCode.OK)
+                if (response.StatusCode == DataProvider.Enums.StatusCode.OK)
                 {
                     await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
                         new ClaimsPrincipal(response.Data));
@@ -71,7 +71,7 @@ namespace DailySpin.Website.Controllers
             if (ModelState.IsValid)
             {
                 var response = await _accountService.ChangePassword(model);
-                if (response.StatusCode == Domain.Enum.StatusCode.OK)
+                if (response.StatusCode == DataProvider.Enums.StatusCode.OK)
                 {
                     return Json(new { description = response.Description });
                 }
