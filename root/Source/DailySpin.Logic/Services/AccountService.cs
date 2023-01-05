@@ -5,6 +5,7 @@ using DailySpin.DataProvider.Interfaces;
 using DailySpin.DataProvider.Response;
 using DailySpin.Logic.Interfaces;
 using DailySpin.ViewModel.ViewModels;
+using DailySpin.Website.Migrations;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System.Security.Claims;
@@ -36,15 +37,18 @@ namespace DailySpin.Logic.Services
                     };
                 }
 
+                MemoryStream target = new MemoryStream();
+                model.Image.CopyTo(target);
+                byte[] data = target.ToArray();
                 user = new UserAccount()
                 {
                     Email = model.Email,
                     DisplayName = model.Nickname,
                     Role = Role.User,
                     Password = HashPasswordHelper.HashPassowrd(model.Password),
-                    Balance = 0
+                    Balance = 0,
+                    Image = data
                 };
-
                 await _userRepository.Create(user);
                 var result = Authenticate(user);
 
