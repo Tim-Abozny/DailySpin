@@ -13,36 +13,36 @@
             <div class="row justify-content-center">
                 <div class="col-md-10">
                     <span class="anchor"></span>
-                    <div class="card card-account card-outline-secondary border border-white">
+                    <div class="form-control">
                         <div class="card-header">
-                            <h3 class="mb-0 text-center paragraphHome text-black">Регистрация</h3>
+                            <h3 class="text-center">Registration</h3>
                         </div>
                         <div class="card-body">
-                            <form asp-controller="Account" asp-action="Register" method="post" enctype="multipart/form-data">>
-                                <div asp-validation-summary="All" style="font-size:23px; font-family:Impact" class="text-danger text-center"></div>
+                            <form asp-controller="Account" asp-action="Register" method="post" enctype="multipart/form-data">
+                                <div asp-validation-summary="All" style="font-size:23px; font-family:Aleo" class="text-danger text-center"></div>
                                 <div class="form-group">
-                                    <input asp-for="Nickname" class="form-control textbox-dg font-weight-bold text-center" placeholder="Имя" type="text">
+                                    <label asp-for="Nickname">Nickname</label>
+                                    <input asp-for="Nickname" class="form-control" placeholder="nickname" type="text">
                                 </div>
                                 <div class="form-group">
-                                    <input asp-for="Email" class="form-control" autocomplete="username" aria-required="true" placeholder="name@example.com" />
                                     <label asp-for="Email">Email</label>
                                     <span asp-validation-for="Email" class="text-danger"></span>
+                                    <input asp-for="Email" class="form-control" autocomplete="username" aria-required="true" placeholder="name@example.com" />
                                 </div>
                                 <div class="form-group">
-                                    <input autocomplete="new-password" asp-for="Password" placeholder="Пароль" class="form-control textbox-dg font-weight-bold text-center" type="password">
+                                <span class="text">Password length must be higher then 5 symbols</span>
+                                    <input autocomplete="new-password" asp-for="Password" placeholder="Password" class="form-control" type="password">
                                 </div>
-                                <span class="text-black" style="font-size: small; font-family:'Comic Sans MS'">Пароль должен быть длиной больше 6 символов и иметь только латинские символы</span>
                                 <div class="form-group">
-                                    <input autocomplete="new-password" asp-for="PasswordConfirm" placeholder="Подтвердите пароль" class="form-control textbox-dg font-weight-bold text-center" type="password">
+                                    <input autocomplete="new-password" asp-for="PasswordConfirm" placeholder="Confirm password" class="form-control" type="password">
                                 </div>
                                 <label asp-for="Image"></label>
                                 <div class="form-group">
                                     <input asp-for="Image" aria-required="true" type="file" accept="image/*" />
                                 </div>
                                 <div>
-                                    <h2 class="paragraphHome text-center"><a asp-controller="Account" target="_blank" asp-action="Login" style="color:deepskyblue;">Вход</a></h2>
+                                    <button class="btn btn-success" type="submit">Complete</button>
                                 </div>
-                                <button class="btn btn-success btn-lg float-right" type="submit">Отправить</button>
                             </form>
                         </div>
                     </div>

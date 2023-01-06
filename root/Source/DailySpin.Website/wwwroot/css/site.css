@@ -41,6 +41,21 @@ input.form-control, input.form-control.valid, input.form-control.input-validatio
     font-family: "Aleo";
 }
 
+.form-control {
+    background-color: #0c111d;
+    color: #DDE119;
+}
+
+.btn-success {
+    position: relative;
+    left: 50%;
+    transform: translate(-50%, 0);
+}
+
+div.form-group {
+    color: #DDE119;
+}
+
 .container {
     background-color: #0c111d;
 }
@@ -123,4 +138,9 @@ button.nav-link:hover {
 
 .display-2 {
     color: #DDE119;
+}
+
+input:-webkit-autofill, input:-webkit-autofill:focus {
+    -webkit-box-shadow: inset 0 0 0 50px #0c111d; /* цвет вашего фона */
+    -webkit-text-fill-color: #DDE119; /* цвет текста */
 }

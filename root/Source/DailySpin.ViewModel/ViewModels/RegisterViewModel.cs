@@ -17,13 +17,13 @@ namespace DailySpin.ViewModel.ViewModels
 
 
         [DataType(DataType.Password)]
-        [Required(ErrorMessage = "Укажите пароль")]
-        [MinLength(6, ErrorMessage = "Пароль должен иметь длину больше 6 символов")]
+        [Required(ErrorMessage = "Enter password")]
+        [MinLength(6, ErrorMessage = "Password leght must be higher then 5 symbols")]
         public string Password { get; set; }
 
         [DataType(DataType.Password)]
-        [Required(ErrorMessage = "Подтвердите пароль")]
-        [Compare("Password", ErrorMessage = "Пароли не совпадают")]
+        [Required(ErrorMessage = "Confirm password")]
+        [Compare("Password", ErrorMessage = "Passwords don't match")]
         public string PasswordConfirm { get; set; }
 
         [Display(Name = "Avatar image")]

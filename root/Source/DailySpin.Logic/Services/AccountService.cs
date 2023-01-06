@@ -33,7 +33,7 @@ namespace DailySpin.Logic.Services
                 {
                     return new BaseResponse<ClaimsIdentity>()
                     {
-                        Description = "Пользователь с таким логином уже есть"
+                        Description = "User with this login already exist"
                     };
                 }
 
@@ -55,7 +55,7 @@ namespace DailySpin.Logic.Services
                 return new BaseResponse<ClaimsIdentity>()
                 {
                     Data = result,
-                    Description = "Объект добавился",
+                    Description = "Object added",
                     StatusCode = StatusCode.OK
                 };
             }
@@ -79,7 +79,7 @@ namespace DailySpin.Logic.Services
                 {
                     return new BaseResponse<ClaimsIdentity>()
                     {
-                        Description = "Пользователь не найден"
+                        Description = "User not found"
                     };
                 }
 
@@ -87,7 +87,7 @@ namespace DailySpin.Logic.Services
                 {
                     return new BaseResponse<ClaimsIdentity>()
                     {
-                        Description = "Неверный пароль или логин"
+                        Description = "Error: check login or pass"
                     };
                 }
                 var result = Authenticate(user);
@@ -119,7 +119,7 @@ namespace DailySpin.Logic.Services
                     return new BaseResponse<bool>()
                     {
                         StatusCode = StatusCode.UserNotFound,
-                        Description = "Пользователь не найден"
+                        Description = "User not found"
                     };
                 }
 
@@ -130,7 +130,7 @@ namespace DailySpin.Logic.Services
                 {
                     Data = true,
                     StatusCode = StatusCode.OK,
-                    Description = "Пароль обновлен"
+                    Description = "Password has been changed"
                 };
 
             }
