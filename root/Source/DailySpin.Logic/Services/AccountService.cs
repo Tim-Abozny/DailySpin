@@ -5,7 +5,6 @@ using DailySpin.DataProvider.Interfaces;
 using DailySpin.DataProvider.Response;
 using DailySpin.Logic.Interfaces;
 using DailySpin.ViewModel.ViewModels;
-using DailySpin.Website.Migrations;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System.Security.Claims;
@@ -14,7 +13,7 @@ namespace DailySpin.Logic.Services
 {
     public class AccountService : IAccountService
     {
-        private readonly IBaseRepository<UserAccount> _userRepository;
+        private static IBaseRepository<UserAccount> _userRepository;
         private readonly ILogger<AccountService> _logger;
 
         public AccountService(IBaseRepository<UserAccount> userRepository,
@@ -29,11 +28,20 @@ namespace DailySpin.Logic.Services
             try
             {
                 var user = await _userRepository.GetAll().FirstOrDefaultAsync(x => x.Email == model.Email);
+                var userName = await _userRepository.GetAll().FirstOrDefaultAsync(x => x.DisplayName == model.Nickname);
                 if (user != null)
                 {
                     return new BaseResponse<ClaimsIdentity>()
                     {
                         Description = "User with this login already exist"
+                    };
+                }
+
+                if (userName != null)
+                {
+                    return new BaseResponse<ClaimsIdentity>()
+                    {
+                        Description = "User with this nickname already exist"
                     };
                 }
 
@@ -150,10 +158,46 @@ namespace DailySpin.Logic.Services
             var claims = new List<Claim>
             {
                 new Claim(ClaimsIdentity.DefaultNameClaimType, user.DisplayName),
-                new Claim(ClaimsIdentity.DefaultRoleClaimType, user.Role.ToString())
+                new Claim(ClaimsIdentity.DefaultRoleClaimType, user.Role.ToString()),
             };
+
             return new ClaimsIdentity(claims, "ApplicationCookie",
                 ClaimsIdentity.DefaultNameClaimType, ClaimsIdentity.DefaultRoleClaimType);
+        }
+        public async Task<BaseResponse<BetViewModel>> LoadUserData(string loginedUser)
+        {
+            try
+            {
+                var user = await _userRepository.GetAll().FirstOrDefaultAsync(x => x.DisplayName == loginedUser);
+                if (user == null)
+                {
+                    return new BaseResponse<BetViewModel>()
+                    {
+                        Description = "ERROR IN LoadUserData",
+                        StatusCode = StatusCode.InternalServerError
+                    };
+                }
+                BetViewModel returnedUser = new BetViewModel();
+                
+                returnedUser.UserImage = user.Image!;
+                returnedUser.UserName = user.DisplayName;
+                returnedUser.UserBalance = user.Balance;
+
+                return new BaseResponse<BetViewModel>()
+                {
+                    Data = returnedUser
+                };
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"[LoadUserData]: {ex.Message}");
+                return new BaseResponse<BetViewModel>()
+                {
+                    Description = ex.Message,
+                    StatusCode = StatusCode.InternalServerError
+                };
+            }
         }
     }
 }

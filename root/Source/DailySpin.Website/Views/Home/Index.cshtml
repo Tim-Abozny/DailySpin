@@ -3,7 +3,18 @@
 }
 
 <div class="text-center">
-    <h1 class="display-2">Welcome</h1>
-    <h5 class="display-4">This is home page</h5>
-    <h5 class="display-4">There will be future website</h5>
+    @if (User.Identity.IsAuthenticated)
+    {
+            <!--отрисовка рулетки, контейнера с панелью ставок, историей выигрышей, стакана ставок--> 
+            <form method="post" asp-controller="Account" asp-action="Logout">
+                                                <button id="logout" type="submit" class="nav-link btn btn-link border-0">Logout</button>
+            </form>
+    }
+    else
+    {
+        <h1 class="display-2">Welcome</h1>
+        <h5 class="display-4">This is home page</h5>
+        <h5 class="display-4">To continue work with website</h5>
+        <h5 class="display-4">Log in or Sign up</h5>
+    }
 </div>

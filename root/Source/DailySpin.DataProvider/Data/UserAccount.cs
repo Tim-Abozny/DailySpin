@@ -11,7 +11,7 @@ namespace DailySpin.DataProvider.Data
         public string DisplayName { get; set; }
         public string Email { get; set; }
         public string Password { get; set; }
-        public long Balance { get; set; }
+        public ulong Balance { get; set; }
         public byte[]? Image { get; set; }
         public Role Role { get; set; }
     }

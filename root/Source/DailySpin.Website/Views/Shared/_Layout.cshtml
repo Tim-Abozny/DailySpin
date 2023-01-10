@@ -1,4 +1,7 @@
-﻿<!DOCTYPE html>
+﻿@using DailySpin.Logic.Services;
+@using DailySpin.Website.Controllers;
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -21,42 +24,9 @@
                     </button>
                 </div>
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between center-align">
-                        <!--<ul class="navbar-nav ml0">
-                            <partial name="_LoginPartial" />
-                        </ul>-->
                     <ul class="navbar-nav">
-                        @if (User.Identity.IsAuthenticated)
-                        {
-                            <li class="nav-item">
-                                <a class="nav-link" asp-area="" asp-controller="" asp-action="#">Deposit</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" asp-area="" asp-controller="" asp-action="#">Withdraw</a>
-                        </li>
-
-                        <li class="nav-item">
-                                <a id="manage" class="nav-link" asp-page="/Account/Manage/Index" title="Manage">user!.DisplayName</a>
-                            </li>
-                            <li class="balance-user">
-                                    Balance: user.Balance 💰
-                            </li>
-                                <!--<img class="user-avatar" src="string.Format("data:image/png;base64, {0}", Convert.ToBase64String(user.Image))"/>-->
-                            <li class="nav-item">
-                                <form method="post" asp-controller="Account" asp-action="Logout">
-                                            <button id="logout" type="submit" class="nav-link btn btn-link border-0">Logout</button>
-                                </form>
-                            </li>
-                        }
-                        else
-                        {
-                            <li class="nav-item">
-                                <a class="nav-link" id="register" asp-controller="Account" asp-action="Register">Register</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" id="login" asp-controller="Account" asp-action="Login">Login</a>
-                            </li>
-                        }
-                </ul>
+                        <partial name="_LoginPartial" />
+                    </ul>
                 </div>
             </nav>
     </header>

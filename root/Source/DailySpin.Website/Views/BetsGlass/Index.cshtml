@@ -1,0 +1,17 @@
+﻿@using DailySpin.ViewModel.ViewModels;
+@model List<BetsGlassViewModel>
+
+@{
+    ViewData["Title"] = "Glasses Page";
+}
+
+<div class="text-center">
+    <h3>В списке @Model.Count элемента</h3>
+    @foreach (var glass in Model)
+    {
+        <p>@glass.ColorType</p>
+        <p>@glass.BetMultiply</p>
+        <p>@glass.GlassImage</p>
+        <img class="user-avatar" src="@string.Format("data:image/png;base64, {0}", Convert.ToBase64String(glass.GlassImage))"/>
+    }
+</div>
