@@ -5,13 +5,26 @@
     ViewData["Title"] = "Glasses Page";
 }
 
-<div class="text-center">
-    <h3>В списке @Model.Count элемента</h3>
+
+<div>
     @foreach (var glass in Model)
     {
-        <p>@glass.ColorType</p>
-        <p>@glass.BetMultiply</p>
-        <p>@glass.GlassImage</p>
-        <img class="user-avatar" src="@string.Format("data:image/png;base64, {0}", Convert.ToBase64String(glass.GlassImage))"/>
+        <p>
+            <form  method="post" asp-controller="BetsGlass" asp-action="Logout">
+                <button class="betglass btn btn-link border-0">
+                    <img class="user-avatar" src="@string.Format("data:image/png;base64, {0}", Convert.ToBase64String(glass.GlassImage))"/> PLACE BET     WIN x @glass.BetMultiply
+                </button>
+            </form>
+        </p>
+        <p>
+            @foreach (var bet in glass.Bets)
+            {
+                <p>
+                    <img class="user-avatar" src="@string.Format("data:image/png;base64, {0}", Convert.ToBase64String(bet.UserImage))"/>
+                    @bet.UserName
+                    @bet.UserBet
+                </p>
+            }
+        </p>
     }
 </div>

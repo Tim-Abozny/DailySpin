@@ -14,15 +14,28 @@ namespace DailySpin.Website.Controllers
         }
         public async Task<IActionResult> Index()
         {
-            await _glassService.ClearGlasses(); // run with debag at this point
-            await _glassService.CreateGlasses(); // 'cause this rows needs to load
-            var model = await _glassService.GetGlasses(); // try to fix it later
+            await _glassService.ClearGlasses();
+            await _glassService.CreateGlasses();
+            var model = await _glassService.GetGlasses();
             List<BetsGlassViewModel> retModel = new List<BetsGlassViewModel>();
             foreach (var item in model.Data)
             {
                 retModel.Add(item);
             }
             return View(retModel);
+        }
+        [HttpPost]
+        public async Task<IActionResult> PlaceBet()
+        {
+            /*
+             * validation data -> Bet userBet = new Bet()
+             * userBet.NeedestData = data
+             * etc
+             * await _glassService.PlaceBet(userBet)
+             * 
+             *        
+             */
+            return View();
         }
     }
 }

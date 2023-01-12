@@ -23,25 +23,18 @@ namespace DailySpin.Logic.Services
 
         public async Task<BaseResponse<bool>> ClearGlasses()
         {
-            BetsGlass firstGlass = await _glassRepository.GetAll().FirstOrDefaultAsync<BetsGlass>();
-            BetsGlass secondGlass = await _glassRepository.GetAll().FirstOrDefaultAsync<BetsGlass>();
-            BetsGlass thirdGlass = await _glassRepository.GetAll().FirstOrDefaultAsync<BetsGlass>();
-            BetsGlass checkGlass = await _glassRepository.GetAll().FirstOrDefaultAsync<BetsGlass>();
-            
-            if (firstGlass != null)
-                await _glassRepository.Delete(firstGlass);
-            if (secondGlass != null)
-                await _glassRepository.Delete(secondGlass);
-            if (thirdGlass != null)
-                await _glassRepository.Delete(thirdGlass);
-            if (checkGlass != null)
-                await _glassRepository.Delete(checkGlass);
-
+            //solved optimization problem ;)
+            BetsGlass betsGlass;
+            for (int i = 0; i < 4; i++)
+            {
+                betsGlass = await _glassRepository.GetAll().FirstOrDefaultAsync<BetsGlass>();
+                if (betsGlass != null)
+                    await _glassRepository.Delete(betsGlass);
+            }
             return new BaseResponse<bool>()
             {
                 Data = true
             };
-            
         }
 
         public async Task<BaseResponse<List<BetsGlassViewModel>>> GetGlasses()
@@ -57,15 +50,20 @@ namespace DailySpin.Logic.Services
                 };
             }
             List<BetsGlassViewModel> retModel = new List<BetsGlassViewModel>();
+            var cpBets = new List<BetViewModel>();
+            
 
             foreach (var item in list)
             {
+                
                 retModel.Add(
                 new BetsGlassViewModel()
                 {
                     BetMultiply = item.BetMultiply,
                     GlassImage = item.GlassImage,
-                    ColorType = item.ColorType.ToString()
+                    ColorType = item.ColorType.ToString(),
+                    Bets = item.Bets,
+                    TotalBetSum = item.TotalBetSum
                 }
                 );
             }

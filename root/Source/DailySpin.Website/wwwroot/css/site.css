@@ -144,3 +144,20 @@ input:-webkit-autofill, input:-webkit-autofill:focus {
     -webkit-box-shadow: inset 0 0 0 50px #0c111d; /* цвет вашего фона */
     -webkit-text-fill-color: #DDE119; /* цвет текста */
 }
+
+button.betglass {
+    color: #DDE119;
+    background-color: #262473;
+    border-radius: 15px;
+    font-weight: 600;
+    font-size: 20px;
+    letter-spacing: 1px;
+    text-decoration: none;
+    margin-right: 15px;
+}
+
+button.betglass:hover {
+    color: #262473;
+    background-color: #D7DB02;
+    text-decoration: none;
+}
