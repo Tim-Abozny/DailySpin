@@ -14,8 +14,8 @@ namespace DailySpin.Website.Controllers
         }
         public async Task<IActionResult> Index()
         {
-            await _glassService.ClearGlasses();
-            await _glassService.CreateGlasses();
+            // await _glassService.ClearGlasses();
+            // await _glassService.CreateGlasses();
             var model = await _glassService.GetGlasses();
             List<BetsGlassViewModel> retModel = new List<BetsGlassViewModel>();
             foreach (var item in model.Data)
@@ -25,16 +25,10 @@ namespace DailySpin.Website.Controllers
             return View(retModel);
         }
         [HttpPost]
-        public async Task<IActionResult> PlaceBet()
+        public async Task<IActionResult> PlaceBet(BetsGlassViewModel glassModel, uint bet)
         {
-            /*
-             * validation data -> Bet userBet = new Bet()
-             * userBet.NeedestData = data
-             * etc
-             * await _glassService.PlaceBet(userBet)
-             * 
-             *        
-             */
+            if (bet > 0)
+                await _glassService.PlaceBet(glassModel, HttpContext.User.Identity.Name, bet);
             return View();
         }
     }

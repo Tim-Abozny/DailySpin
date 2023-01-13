@@ -5,7 +5,13 @@
     ViewData["Title"] = "Glasses Page";
 }
 
-
+<div>
+    <p>
+        <form  method="post" asp-controller="BetsGlass" asp-action="Logout">
+            <!-- There input area for place your bet -->
+        </form>
+    </p>
+</div>
 <div>
     @foreach (var glass in Model)
     {

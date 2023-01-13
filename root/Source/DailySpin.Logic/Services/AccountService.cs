@@ -164,6 +164,7 @@ namespace DailySpin.Logic.Services
             return new ClaimsIdentity(claims, "ApplicationCookie",
                 ClaimsIdentity.DefaultNameClaimType, ClaimsIdentity.DefaultRoleClaimType);
         }
+
         public async Task<BaseResponse<BetViewModel>> LoadUserData(string loginedUser)
         {
             try

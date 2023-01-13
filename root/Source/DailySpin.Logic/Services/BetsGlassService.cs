@@ -1,10 +1,13 @@
-﻿using DailySpin.DataProvider.Enums;
+﻿using DailySpin.DataProvider.Data;
+using DailySpin.DataProvider.Enums;
 using DailySpin.DataProvider.Interfaces;
+using DailySpin.DataProvider.Repository;
 using DailySpin.DataProvider.Response;
 using DailySpin.Logic.Interfaces;
 using DailySpin.ViewModel.ViewModels;
 using DailySpin.Website.Enums;
 using DailySpin.Website.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
@@ -13,6 +16,7 @@ namespace DailySpin.Logic.Services
     public class BetsGlassService : IBetsGlassService
     {
         private static IBaseRepository<BetsGlass> _glassRepository;
+        private static IBaseRepository<UserAccount> _userRepository;
         private readonly ILogger _logger;
         public BetsGlassService(IBaseRepository<BetsGlass> glassRepository,
             ILogger<BetsGlassService> logger)
@@ -38,7 +42,7 @@ namespace DailySpin.Logic.Services
         }
 
         public async Task<BaseResponse<List<BetsGlassViewModel>>> GetGlasses()
-        { 
+        {
             var list = await _glassRepository.GetAll().ToListAsync();
             if (list == null)
             {
@@ -50,22 +54,35 @@ namespace DailySpin.Logic.Services
                 };
             }
             List<BetsGlassViewModel> retModel = new List<BetsGlassViewModel>();
-            var cpBets = new List<BetViewModel>();
-            
 
             foreach (var item in list)
             {
-                
-                retModel.Add(
-                new BetsGlassViewModel()
+                if (item.Bets == null)
                 {
-                    BetMultiply = item.BetMultiply,
-                    GlassImage = item.GlassImage,
-                    ColorType = item.ColorType.ToString(),
-                    Bets = item.Bets,
-                    TotalBetSum = item.TotalBetSum
+                    retModel.Add(
+                    new BetsGlassViewModel()
+                    {
+                        BetMultiply = item.BetMultiply,
+                        GlassImage = item.GlassImage,
+                        ColorType = item.ColorType.ToString(),
+                        Bets = new List<Bet>(),
+                        TotalBetSum = item.TotalBetSum
+                    }
+                    );
                 }
-                );
+                else
+                {
+                    retModel.Add(
+                    new BetsGlassViewModel()
+                    {
+                        BetMultiply = item.BetMultiply,
+                        GlassImage = item.GlassImage!,
+                        ColorType = item.ColorType.ToString(),
+                        Bets = item.Bets,
+                        TotalBetSum = item.TotalBetSum
+                    }
+                    );
+                }
             }
 
             return new BaseResponse<List<BetsGlassViewModel>>()
@@ -76,7 +93,52 @@ namespace DailySpin.Logic.Services
             };
         }
 
-            public async Task<BaseResponse<bool>> CreateGlasses()
+        public async Task<BaseResponse<bool>> PlaceBet(BetsGlassViewModel glassModel, string loginedUsername, uint bet)
+        {
+            try
+            {
+                var user = await _userRepository.GetAll().FirstOrDefaultAsync(x => x.DisplayName == loginedUsername);
+                if (bet <= 0 || bet > user.Balance)
+                {
+                    return new BaseResponse<bool>()
+                    {
+                        Data = false,
+                        Description = "ERROR while try PlaceBet",
+                        StatusCode = StatusCode.InternalServerError
+                    };
+                }
+
+                var glass = await _glassRepository.GetAll().FirstOrDefaultAsync(x => x.ColorType.ToString() == glassModel.ColorType); ;
+                user.Balance -= bet;
+                glass.Bets.Add(new Bet()
+                {
+                    Id = Guid.NewGuid(),
+                    UserAccountId = user.Id,
+                    UserBet = bet,
+                    UserImage = user.Image,
+                    UserName = user.DisplayName
+                });
+                await _glassRepository.Update(glass);
+
+                return new BaseResponse<bool>()
+                {
+                    Data = true,
+                    StatusCode = StatusCode.OK,
+                    Description = "Glasses has been created!"
+                };
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"[PlaceBet]: {ex.Message}");
+                return new BaseResponse<bool>()
+                {
+                    Data = false,
+                    Description = ex.Message,
+                    StatusCode = StatusCode.InternalServerError
+                };
+            }
+        }
+        public async Task<BaseResponse<bool>> CreateGlasses()
         {
             try
             {
@@ -96,6 +158,7 @@ namespace DailySpin.Logic.Services
                 _logger.LogError(ex, $"[CreateGlasses]: {ex.Message}");
                 return new BaseResponse<bool>()
                 {
+                    Data = false,
                     Description = ex.Message,
                     StatusCode = StatusCode.InternalServerError
                 };
