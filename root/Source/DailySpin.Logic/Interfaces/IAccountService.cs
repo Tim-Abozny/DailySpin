@@ -12,5 +12,7 @@ namespace DailySpin.Logic.Interfaces
 
         Task<BaseResponse<bool>> ChangePassword(ChangePasswordViewModel model);
         Task<BaseResponse<BetViewModel>> LoadUserData(string loginedUser);
+        Task<BaseResponse<bool>> Deposit(string loginedUser, ulong sum);
+        Task<BaseResponse<bool>> Withdraw(string loginedUser, ulong sum);
     }
 }

@@ -199,5 +199,80 @@ namespace DailySpin.Logic.Services
                 };
             }
         }
+
+        public async Task<BaseResponse<bool>> Deposit(string loginedUser, ulong sum)
+        {
+            try
+            {
+                var user = await _userRepository.GetAll().FirstOrDefaultAsync(x => x.DisplayName == loginedUser);
+                if (user == null || sum < 0)
+                {
+                    return new BaseResponse<bool>()
+                    {
+                        Data = false,
+                        Description = "ERROR IN Deposit",
+                        StatusCode = StatusCode.InternalServerError
+                    };
+                }
+                user.Balance += sum;
+                await _userRepository.Update(user);
+                return new BaseResponse<bool>()
+                {
+                    Data = true,
+                    Description = "Successfully deposit",
+                    StatusCode = StatusCode.OK
+                };
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"[Deposit]: {ex.Message}");
+                return new BaseResponse<bool>()
+                {
+                    Data = false,
+                    Description = ex.Message,
+                    StatusCode = StatusCode.InternalServerError
+                };
+            }
+        }
+
+        public async Task<BaseResponse<bool>> Withdraw(string loginedUser, ulong sum)
+        {
+            try
+            {
+                var user = await _userRepository.GetAll().FirstOrDefaultAsync(x => x.DisplayName == loginedUser);
+                if (user == null || sum < 0)
+                {
+                    return new BaseResponse<bool>()
+                    {
+                        Data = false,
+                        Description = "ERROR IN Withdraw",
+                        StatusCode = StatusCode.InternalServerError
+                    };
+                }
+                if (sum <= user.Balance)
+                {
+                    user.Balance -= sum;
+                    await _userRepository.Update(user);
+                }
+                return new BaseResponse<bool>()
+                {
+                    Data = true,
+                    Description = "Successfully withdraw",
+                    StatusCode = StatusCode.OK
+                };
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"[Withdraw]: {ex.Message}");
+                return new BaseResponse<bool>()
+                {
+                    Data = false,
+                    Description = ex.Message,
+                    StatusCode = StatusCode.InternalServerError
+                };
+            }
+        }
     }
 }

@@ -80,5 +80,23 @@ namespace DailySpin.Website.Controllers
 
             return StatusCode(StatusCodes.Status500InternalServerError, new { modelError.FirstOrDefault().ErrorMessage });
         }
+        //13.01
+        [HttpGet]
+        public IActionResult Deposit() => View();
+
+        [HttpPost]
+        public async Task<IActionResult> Deposit(ulong sum)
+        {
+            await _accountService.Deposit(HttpContext.User.Identity.Name, sum);
+            return RedirectToAction("Index", "BetsGlass");
+        }
+        [HttpGet]
+        public IActionResult Withdraw() => View();
+        [HttpPost]
+        public async Task<IActionResult> Withdraw(ulong sum)
+        {
+            await _accountService.Withdraw(HttpContext.User.Identity.Name, sum);
+            return RedirectToAction("Index", "BetsGlass");
+        }
     }
 }
