@@ -17,11 +17,16 @@ namespace DailySpin.Logic.Services
     {
         private static IBaseRepository<BetsGlass> _glassRepository;
         private static IBaseRepository<UserAccount> _userRepository;
+        private static IBaseRepository<Bet> _betRepository;
         private readonly ILogger _logger;
         public BetsGlassService(IBaseRepository<BetsGlass> glassRepository,
+            IBaseRepository<UserAccount> userRepository,
+            IBaseRepository<Bet> betRepository,
             ILogger<BetsGlassService> logger)
         {
             _glassRepository = glassRepository;
+            _userRepository = userRepository;
+            _betRepository = betRepository;
             _logger = logger;
         }
 
@@ -57,6 +62,8 @@ namespace DailySpin.Logic.Services
 
             foreach (var item in list)
             {
+                //найди тут все ставки для цвета и присвой возвращаемому объекту. Будет тебе счастье!
+                var retBet = _betRepository.GetAll().Where<Bet>(x => x.BetsGlassId == item.Id).ToList();
                 if (item.Bets == null)
                 {
                     retModel.Add(
@@ -64,8 +71,8 @@ namespace DailySpin.Logic.Services
                     {
                         BetMultiply = item.BetMultiply,
                         GlassImage = item.GlassImage,
-                        ColorType = item.ColorType.ToString(),
-                        Bets = new List<Bet>(),
+                        ColorType = item.ColorType,
+                        Bets = retBet,
                         TotalBetSum = item.TotalBetSum
                     }
                     );
@@ -77,8 +84,8 @@ namespace DailySpin.Logic.Services
                     {
                         BetMultiply = item.BetMultiply,
                         GlassImage = item.GlassImage!,
-                        ColorType = item.ColorType.ToString(),
-                        Bets = item.Bets,
+                        ColorType = item.ColorType,
+                        Bets = retBet,
                         TotalBetSum = item.TotalBetSum
                     }
                     );
@@ -93,7 +100,7 @@ namespace DailySpin.Logic.Services
             };
         }
 
-        public async Task<BaseResponse<bool>> PlaceBet(BetsGlassViewModel glassModel, string loginedUsername, uint bet)
+        public async Task<BaseResponse<bool>> PlaceBet(ChipColor glassColor, string loginedUsername, uint bet)
         {
             try
             {
@@ -108,17 +115,33 @@ namespace DailySpin.Logic.Services
                     };
                 }
 
-                var glass = await _glassRepository.GetAll().FirstOrDefaultAsync(x => x.ColorType.ToString() == glassModel.ColorType); ;
+                var glass = await _glassRepository.GetAll().FirstOrDefaultAsync(x => x.ColorType == glassColor);
+                
                 user.Balance -= bet;
-                glass.Bets.Add(new Bet()
+                await _userRepository.Update(user);
+                // походу нужно сначала добавить объект Bet в бд, а потом его же в список Bets в BetsGlass
+                // для этого ещё понадобится репа _betRep
+                Bet dbBet = new Bet
                 {
                     Id = Guid.NewGuid(),
                     UserAccountId = user.Id,
                     UserBet = bet,
                     UserImage = user.Image,
-                    UserName = user.DisplayName
-                });
-                await _glassRepository.Update(glass);
+                    UserName = user.DisplayName,
+                    BetsGlassId = glass.Id
+                };
+                await _betRepository.Create(dbBet);
+                
+                if (glass.Bets == null)
+                {
+                    glass.Bets = new List<Bet>{dbBet};
+                    await _glassRepository.Update(glass);
+                }
+                else
+                {
+                    glass.Bets.Add(dbBet);
+                    await _glassRepository.Update(glass);
+                }
 
                 return new BaseResponse<bool>()
                 {

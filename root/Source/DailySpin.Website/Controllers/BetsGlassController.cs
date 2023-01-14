@@ -1,5 +1,6 @@
 ﻿using DailySpin.Logic.Interfaces;
 using DailySpin.ViewModel.ViewModels;
+using DailySpin.Website.Enums;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DailySpin.Website.Controllers
@@ -25,11 +26,11 @@ namespace DailySpin.Website.Controllers
             return View(retModel);
         }
         [HttpPost]
-        public async Task<IActionResult> PlaceBet(BetsGlassViewModel glassModel, uint bet)
-        {
-            if (bet > 0)
-                await _glassService.PlaceBet(glassModel, HttpContext.User.Identity.Name, bet);
-            return View();
+        public async Task<IActionResult> PlaceBet(ChipColor glassColor, uint bet)
+        { // incorrect data here (only Green color recived from View) | I'll try to fix it, but API work correctly
+            if (bet > 0 && HttpContext.User.Identity.Name != null)
+                await _glassService.PlaceBet(glassColor, HttpContext.User.Identity.Name, bet);
+            return RedirectToAction("Index");
         }
     }
 }

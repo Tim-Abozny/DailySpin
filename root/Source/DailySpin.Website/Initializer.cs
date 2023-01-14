@@ -13,12 +13,14 @@ namespace DailySpin.Website
         {
             services.AddScoped<IBaseRepository<UserAccount>, UserRepository>();
             services.AddScoped<IBaseRepository<BetsGlass>, BetGlassRepository>();
+            services.AddScoped<IBaseRepository<Bet>, BetRepository>();
         }
 
         public static void InitializeServices(this IServiceCollection services)
         {
             services.AddScoped<IAccountService, AccountService>();
             services.AddScoped<IBetsGlassService, BetsGlassService>();
+            services.AddScoped<IBetService, BetService>();
         }
     }
 }

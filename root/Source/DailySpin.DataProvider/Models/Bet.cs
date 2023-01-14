@@ -9,6 +9,7 @@ namespace DailySpin.Website.Models
         public byte[] UserImage { get; set; }
         public string UserName { get; set; }
         public Guid UserAccountId { get; set; }
+        public Guid BetsGlassId { get; set; }
         public uint UserBet { get; set; }
     }
 }
