@@ -1,7 +1,6 @@
 ﻿using DailySpin.DataProvider.Response;
 using DailySpin.ViewModel.ViewModels;
 using DailySpin.Website.Enums;
-using System.Security.Claims;
 
 namespace DailySpin.Logic.Interfaces
 {

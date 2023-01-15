@@ -1,13 +1,11 @@
 ﻿using DailySpin.DataProvider.Data;
 using DailySpin.DataProvider.Enums;
 using DailySpin.DataProvider.Interfaces;
-using DailySpin.DataProvider.Repository;
 using DailySpin.DataProvider.Response;
 using DailySpin.Logic.Interfaces;
 using DailySpin.ViewModel.ViewModels;
 using DailySpin.Website.Enums;
 using DailySpin.Website.Models;
-using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
@@ -32,7 +30,6 @@ namespace DailySpin.Logic.Services
 
         public async Task<BaseResponse<bool>> ClearGlasses()
         {
-            //solved optimization problem ;)
             BetsGlass betsGlass;
             for (int i = 0; i < 4; i++)
             {
@@ -62,7 +59,6 @@ namespace DailySpin.Logic.Services
 
             foreach (var item in list)
             {
-                //найди тут все ставки для цвета и присвой возвращаемому объекту. Будет тебе счастье!
                 var retBet = _betRepository.GetAll().Where<Bet>(x => x.BetsGlassId == item.Id).ToList();
                 if (item.Bets == null)
                 {
@@ -105,12 +101,12 @@ namespace DailySpin.Logic.Services
             try
             {
                 var user = await _userRepository.GetAll().FirstOrDefaultAsync(x => x.DisplayName == loginedUsername);
-                if (bet <= 0 || bet > user.Balance)
+                if (bet > user.Balance)
                 {
                     return new BaseResponse<bool>()
                     {
                         Data = false,
-                        Description = "ERROR while try PlaceBet",
+                        Description = "Bet higher then balance",
                         StatusCode = StatusCode.InternalServerError
                     };
                 }
@@ -119,8 +115,6 @@ namespace DailySpin.Logic.Services
                 
                 user.Balance -= bet;
                 await _userRepository.Update(user);
-                // походу нужно сначала добавить объект Bet в бд, а потом его же в список Bets в BetsGlass
-                // для этого ещё понадобится репа _betRep
                 Bet dbBet = new Bet
                 {
                     Id = Guid.NewGuid(),

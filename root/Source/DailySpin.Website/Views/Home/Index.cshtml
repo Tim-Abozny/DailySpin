@@ -6,8 +6,8 @@
     @if (User.Identity.IsAuthenticated)
     {
             <!--отрисовка рулетки, контейнера с панелью ставок, историей выигрышей, стакана ставок--> 
-            <form method="post" asp-controller="Account" asp-action="Logout">
-                                                <button id="logout" type="submit" class="nav-link btn btn-link border-0">Logout</button>
+            <form method="post" asp-controller="BetsGlass" asp-action="Index">
+                <button id="logout" type="submit" class="nav-link btn btn-link border-0">Roulette</button>
             </form>
     }
     else

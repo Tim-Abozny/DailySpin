@@ -161,3 +161,26 @@ button.betglass:hover {
     background-color: #D7DB02;
     text-decoration: none;
 }
+
+div.bets-glass {
+    float: left;
+    margin-left: 4%;
+    margin-right: 4%;
+    margin-top: 10px;
+
+}
+
+div.page-glasses {
+    display: flex;
+}
+
+main.pb-3 {
+    margin: 0 auto;
+    width: 99%;
+    height: 99%;
+}
+
+div.bets {
+    margin-left: 15px;
+    font-size: 18px;
+}

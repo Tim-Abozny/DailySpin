@@ -5,34 +5,38 @@
     ViewData["Title"] = "Glasses Page";
 }
 
-<div>
-    <form  method="post" asp-controller="BetsGlass" asp-action="PlaceBet">
-        <div>
-            <p>
-                <div class="form-group">
-                    <input placeholder="Bet" class="form-control textbox-dg font-weight-bold text-center" type="number" name="bet">
-                </div>
-            </p>
-        </div>
-        @foreach (var glass in Model)
-        {
-            <p>
-                <!-- Here I tried to send correctly color, but smth wrong... P.S. Any button send only Green color -->
-                <button data="@glass.ColorType" name="glassColor" class="betglass btn btn-link border-0">
-                    <img class="user-avatar" src="@string.Format("data:image/png;base64, {0}", Convert.ToBase64String(glass.GlassImage))"/> PLACE BET     WIN x @glass.BetMultiply
-                </button>
-            
-            </p>
-            <p>
-                @foreach (var bet in glass.Bets)
-                {
+<div class="page-glasses">
+    <div asp-validation-summary="All" style="font-size:23px; font-family:Aleo" class="text-danger text-center"></div>
+    @foreach (var glass in Model)
+    {
+        <div class="bets-glass">
+            <form method="post" asp-controller="BetsGlass" asp-action="PlaceBet">
+                <div>
                     <p>
-                        <img class="user-avatar" src="@string.Format("data:image/png;base64, {0}", Convert.ToBase64String(bet.UserImage))"/>
-                        @bet.UserName -> 
-                        @bet.UserBet
+                        <div class="form-group">
+                            <input min="1" max="10000000" placeholder="Bet" class="form-control font-weight-bold text-center" type="number" name="bet" style="font-size:18px; font-family:Aleo">
+                        </div>
                     </p>
-                }
-            </p>
-        }
-    </form>
+                </div>
+                <p>
+                    <input type="text" hidden value="@glass.ColorType" name="glassColor" class="betglass"/>
+                    <button class="betglass btn btn-link border-0">
+                        <img class="user-avatar" src="@string.Format("data:image/png;base64, {0}", Convert.ToBase64String(glass.GlassImage))"/> PLACE BET     WIN x @glass.BetMultiply
+                    </button>
+                </p>
+                <div class="bets">
+                    <p>
+                        @foreach (var bet in glass.Bets)
+                        {
+                            <p>
+                                <img class="user-avatar" src="@string.Format("data:image/png;base64, {0}", Convert.ToBase64String(bet.UserImage))"/>
+                                @bet.UserName -> 
+                                @bet.UserBet 💰
+                            </p>
+                        }
+                    </p>
+                </div>
+            </form>
+        </div>
+    }
 </div>

@@ -1,14 +1,20 @@
-﻿using DailySpin.Logic.Interfaces;
+﻿using Azure;
+using DailySpin.Logic.Interfaces;
 using DailySpin.ViewModel.ViewModels;
 using DailySpin.Website.Enums;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
+using DailySpin.DataProvider.Response;
 
 namespace DailySpin.Website.Controllers
 {
     public class BetsGlassController : Controller
     {
         private readonly IBetsGlassService _glassService;
-        
+
         public BetsGlassController(IBetsGlassService glassService)
         {
             _glassService = glassService;
@@ -26,10 +32,22 @@ namespace DailySpin.Website.Controllers
             return View(retModel);
         }
         [HttpPost]
-        public async Task<IActionResult> PlaceBet(ChipColor glassColor, uint bet)
-        { // incorrect data here (only Green color recived from View) | I'll try to fix it, but API work correctly
-            if (bet > 0 && HttpContext.User.Identity.Name != null)
-                await _glassService.PlaceBet(glassColor, HttpContext.User.Identity.Name, bet);
+        [Authorize]
+        public async Task<IActionResult> PlaceBet(string glassColor, uint bet)
+        {
+
+            ChipColor color = ChipColor.Blue;
+            if (glassColor == "Yellow")
+                color = ChipColor.Yellow;
+            else if (glassColor == "Green")
+                color = ChipColor.Green;
+            var response = await _glassService.PlaceBet(color, HttpContext.User.Identity.Name, bet);
+
+            if (response.Data == false)
+            {
+                ModelState.AddModelError("", response.Description);
+                return View(response.Description);
+            } // need to return view with model's error
             return RedirectToAction("Index");
         }
     }
