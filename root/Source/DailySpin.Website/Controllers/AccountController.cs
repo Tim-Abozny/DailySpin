@@ -1,9 +1,9 @@
-﻿using Microsoft.AspNetCore.Authentication.Cookies;
+﻿using DailySpin.Logic.Interfaces;
+using DailySpin.ViewModel.ViewModels;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
-using DailySpin.ViewModel.ViewModels;
-using DailySpin.Logic.Interfaces;
 
 namespace DailySpin.Website.Controllers
 {

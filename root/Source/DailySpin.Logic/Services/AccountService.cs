@@ -179,7 +179,7 @@ namespace DailySpin.Logic.Services
                     };
                 }
                 BetViewModel returnedUser = new BetViewModel();
-                
+
                 returnedUser.UserImage = user.Image!;
                 returnedUser.UserName = user.DisplayName;
                 returnedUser.UserBalance = user.Balance;

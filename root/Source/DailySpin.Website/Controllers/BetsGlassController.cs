@@ -1,13 +1,8 @@
-﻿using Azure;
-using DailySpin.Logic.Interfaces;
+﻿using DailySpin.Logic.Interfaces;
 using DailySpin.ViewModel.ViewModels;
 using DailySpin.Website.Enums;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
-using DailySpin.DataProvider.Response;
 
 namespace DailySpin.Website.Controllers
 {

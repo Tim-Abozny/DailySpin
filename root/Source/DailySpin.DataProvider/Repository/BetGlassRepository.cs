@@ -8,22 +8,17 @@ namespace DailySpin.DataProvider.Repository
     {
         private readonly AppDbContext _db;
         public BetGlassRepository(AppDbContext db) => _db = db;
-        
         public IQueryable<BetsGlass> GetAll() => _db.BetsGlasses;
-
         public async Task Create(BetsGlass entity)
         {
             await _db.BetsGlasses.AddAsync(entity);
             await _db.SaveChangesAsync();
         }
-
         public async Task Delete(BetsGlass entity)
         {
             _db.BetsGlasses.Remove(entity);
             await _db.SaveChangesAsync();
         }
-
-
         public async Task<BetsGlass> Update(BetsGlass entity)
         {
             _db.BetsGlasses.Update(entity);

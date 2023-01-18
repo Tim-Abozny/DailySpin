@@ -13,7 +13,7 @@ namespace DailySpin.Website.Views.Shared.Components
 
             var model = request.Result.Data.UserImage;
             var retStr = string.Format("data:image/png;base64, {0}", Convert.ToBase64String(model));
-            
+
             return retStr;
         }
     }

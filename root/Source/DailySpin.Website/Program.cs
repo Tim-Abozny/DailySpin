@@ -1,7 +1,7 @@
 using DailySpin.DataProvider.Data;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using DailySpin.Website;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -37,7 +37,7 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
-app.UseAuthentication();    
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(

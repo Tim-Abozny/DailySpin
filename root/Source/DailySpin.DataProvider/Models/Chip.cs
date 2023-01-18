@@ -1,5 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
-using DailySpin.Website.Enums;
+﻿using DailySpin.Website.Enums;
+using System.ComponentModel.DataAnnotations;
 
 namespace DailySpin.Website.Models
 {

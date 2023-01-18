@@ -42,7 +42,6 @@ namespace DailySpin.Logic.Services
                 Data = true
             };
         }
-
         public async Task<BaseResponse<List<BetsGlassViewModel>>> GetGlasses()
         {
             var list = await _glassRepository.GetAll().ToListAsync();
@@ -95,7 +94,6 @@ namespace DailySpin.Logic.Services
                 Description = "Successfully returned list"
             };
         }
-
         public async Task<BaseResponse<bool>> PlaceBet(ChipColor glassColor, string loginedUsername, uint bet)
         {
             try
@@ -112,7 +110,7 @@ namespace DailySpin.Logic.Services
                 }
 
                 var glass = await _glassRepository.GetAll().FirstOrDefaultAsync(x => x.ColorType == glassColor);
-                
+
                 user.Balance -= bet;
                 await _userRepository.Update(user);
                 Bet dbBet = new Bet
@@ -125,10 +123,10 @@ namespace DailySpin.Logic.Services
                     BetsGlassId = glass.Id
                 };
                 await _betRepository.Create(dbBet);
-                
+
                 if (glass.Bets == null)
                 {
-                    glass.Bets = new List<Bet>{dbBet};
+                    glass.Bets = new List<Bet> { dbBet };
                     await _glassRepository.Update(glass);
                 }
                 else
@@ -181,7 +179,6 @@ namespace DailySpin.Logic.Services
                 };
             }
         }
-
         private byte[] GetImage(string imgColor)
         {
             byte[] imageArray = File.ReadAllBytes($"C:\\Users\\progr\\source\\repos\\C#\\5sem\\trainee\\root\\Source\\DailySpin.Website\\wwwroot\\img\\{imgColor}Chip.png");

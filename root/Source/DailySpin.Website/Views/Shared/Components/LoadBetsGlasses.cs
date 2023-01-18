@@ -1,5 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using DailySpin.Logic.Interfaces;
+﻿using DailySpin.Logic.Interfaces;
+using Microsoft.AspNetCore.Mvc;
 
 namespace DailySpin.Website.Views.Shared.Components
 {
@@ -12,7 +12,7 @@ namespace DailySpin.Website.Views.Shared.Components
                 .GetGlasses();
 
             var model = request.Result.Data;
-            
+
 
             return "";
         }

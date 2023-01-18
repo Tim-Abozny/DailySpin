@@ -1,5 +1,4 @@
-﻿using DailySpin.Logic.Services;
-using DailySpin.ViewModel.ViewModels;
+﻿using DailySpin.ViewModel.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
