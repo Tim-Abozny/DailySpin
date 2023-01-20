@@ -9,10 +9,13 @@ namespace DailySpin.Website.Controllers
     public class BetsGlassController : Controller
     {
         private readonly IBetsGlassService _glassService;
+        private readonly IRouletteService _rouletteService;
 
-        public BetsGlassController(IBetsGlassService glassService)
+        public BetsGlassController(IBetsGlassService glassService,
+            IRouletteService rouletteService)
         {
             _glassService = glassService;
+            _rouletteService = rouletteService;
         }
         public async Task<IActionResult> Index()
         {
@@ -24,6 +27,7 @@ namespace DailySpin.Website.Controllers
             {
                 retModel.Add(item);
             }
+            await _rouletteService.RunAsync();
             return View(retModel);
         }
         [HttpPost]

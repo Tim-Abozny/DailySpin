@@ -157,9 +157,9 @@ namespace DailySpin.Logic.Services
         {
             try
             {
-                await fastCreateGlassAsync("blue", 2, ChipColor.Blue);
-                await fastCreateGlassAsync("green", 14, ChipColor.Green);
-                await fastCreateGlassAsync("yellow", 2, ChipColor.Yellow);
+                fastCreateGlass("blue", 2, ChipColor.Blue);
+                fastCreateGlass("green", 14, ChipColor.Green);
+                fastCreateGlass("yellow", 2, ChipColor.Yellow);
 
                 return new BaseResponse<bool>()
                 {
@@ -184,7 +184,7 @@ namespace DailySpin.Logic.Services
             byte[] imageArray = File.ReadAllBytes($"C:\\Users\\progr\\source\\repos\\C#\\5sem\\trainee\\root\\Source\\DailySpin.Website\\wwwroot\\img\\{imgColor}Chip.png");
             return imageArray;
         }
-        private async Task fastCreateGlassAsync(string colorGlass, ushort betMultiply, ChipColor chipColor)
+        private void fastCreateGlass(string colorGlass, ushort betMultiply, ChipColor chipColor)
         {
             BetsGlass Glass = new BetsGlass()
             {
@@ -196,7 +196,7 @@ namespace DailySpin.Logic.Services
                 GlassImage = GetImage(colorGlass),
                 ColorType = chipColor
             };
-            await _glassRepository.Create(Glass);
+            _glassRepository.Create(Glass);
         }
     }
 }

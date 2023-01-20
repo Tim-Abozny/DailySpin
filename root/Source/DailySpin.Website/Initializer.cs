@@ -21,6 +21,7 @@ namespace DailySpin.Website
             services.AddScoped<IAccountService, AccountService>();
             services.AddScoped<IBetsGlassService, BetsGlassService>();
             services.AddScoped<IBetService, BetService>();
+            services.AddScoped<IRouletteService, RouletteService>();
         }
     }
 }
