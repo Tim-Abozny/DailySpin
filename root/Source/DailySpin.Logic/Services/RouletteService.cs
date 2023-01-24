@@ -1,5 +1,6 @@
 ﻿using DailySpin.DataProvider.Data;
 using DailySpin.DataProvider.Interfaces;
+using DailySpin.DataProvider.Models;
 using DailySpin.DataProvider.Response;
 using DailySpin.Logic.Interfaces;
 using DailySpin.Website.Enums;
@@ -14,12 +15,15 @@ namespace DailySpin.Logic.Services
         private static IBaseRepository<BetsGlass> _glassRepository;
         private static IBaseRepository<UserAccount> _userRepository;
         private static IBaseRepository<Bet> _betRepository;
+        private static IBaseRepository<Roulette> _rouletteRepository;
         private readonly ILogger _logger;
         public RouletteService(IBaseRepository<BetsGlass> glassRepository,
             IBaseRepository<UserAccount> userRepository,
             IBaseRepository<Bet> betRepository,
+            IBaseRepository<Roulette> rouletteRepository,
             ILogger<RouletteService> logger)
         {
+            _rouletteRepository = rouletteRepository;
             _glassRepository = glassRepository;
             _userRepository = userRepository;
             _betRepository = betRepository;
@@ -33,130 +37,95 @@ namespace DailySpin.Logic.Services
             var blueBets = await _betRepository.GetAll().Where(x => x.BetsGlassId == colorBlueID).ToListAsync();
             var greenBets = await _betRepository.GetAll().Where(x => x.BetsGlassId == colorGreenID).ToListAsync();
             var yellowBets = await _betRepository.GetAll().Where(x => x.BetsGlassId == colorYellowID).ToListAsync();
-            
-            ushort lowerCounter = 0; // possible to be 0 always, 'cause method reset this var every call
-            // need to create Roulete model and contain this var as property
-            
-            ulong blueBetsSum = (ulong)blueBets.Sum(x => x.UserBet);
-            ulong greenBetsSum = (ulong)greenBets.Sum(x => x.UserBet);
-            ulong yellowBetsSum = (ulong)yellowBets.Sum(x => x.UserBet);
-
+            var roulette = await _rouletteRepository.GetAll().FirstOrDefaultAsync();
+            ulong blueBetsSum = (ulong)blueBets.Sum(x => x.UserBet) * 2;
+            ulong greenBetsSum = (ulong)greenBets.Sum(x => x.UserBet) * 14;
+            ulong yellowBetsSum = (ulong)yellowBets.Sum(x => x.UserBet) * 2;
             ulong minSum = Math.Min(blueBetsSum, Math.Min(greenBetsSum, yellowBetsSum));
             ulong maxSum = Math.Max(blueBetsSum, Math.Max(greenBetsSum, yellowBetsSum));
-            ulong minYellowBlueSum = Math.Min(blueBetsSum, yellowBetsSum);
+            ulong midSum = greenBetsSum + yellowBetsSum + blueBetsSum - maxSum - minSum;
 
-            //this logic will be used for others color. I'll add smth and edit
-            if (lowerCounter < 6)
+            if (midSum - minSum >= minSum / 20) // !(5%) difference between bets
             {
-                if (minYellowBlueSum == blueBetsSum) //minSum == minYellowBlueSum && 
+                if (minSum == greenBetsSum)
                 {
-                    if (yellowBetsSum - blueBetsSum <= blueBetsSum / 20) //(5%) difference between bets
+                    // green winner
+                    foreach (var bet in greenBets)
                     {
-                        lowerCounter++;
+                        var user = _userRepository.GetAll().FirstOrDefaultAsync(x => x.Id == bet.UserAccountId).Result;
+                        user.Balance += bet.UserBet * 14;
+                        roulette.Balance -= bet.UserBet * 14;
+                        await _userRepository.Update(user);
                     }
-                    if (blueBetsSum * 2 < yellowBetsSum + greenBetsSum)
-                    {
-                        // blue winner
-                        foreach (var bet in blueBets)
-                        {
-                            var user = _userRepository.GetAll().FirstOrDefaultAsync(x => x.Id == bet.UserAccountId).Result;
-                            user.Balance += bet.UserBet * 2;
-                        }
-                    }
-                    if (blueBetsSum + yellowBetsSum < greenBetsSum * 14)
-                    {
-                        // yellow winner 
-                        foreach (var bet in yellowBets)
-                        {
-                            var user = _userRepository.GetAll().FirstOrDefaultAsync(x => x.Id == bet.UserAccountId).Result;
-                            user.Balance += bet.UserBet * 2;
-                        }
-                    }
-                    else if (blueBetsSum == yellowBetsSum)
-                    {
-                        Random random = new Random();
-                        int tempRandValue = random.Next(1, 2);
-                        if (tempRandValue == 1)
-                        {
-                            // blue winner
-                            foreach (var bet in blueBets)
-                            {
-                                var user = _userRepository.GetAll().FirstOrDefaultAsync(x => x.Id == bet.UserAccountId).Result;
-                                user.Balance += bet.UserBet * 2;
-                            }
-                        }
-                        else if (tempRandValue == 2)
-                        {
-                            // green winner
-                            foreach (var bet in greenBets)
-                            {
-                                var user = _userRepository.GetAll().FirstOrDefaultAsync(x => x.Id == bet.UserAccountId).Result;
-                                user.Balance += bet.UserBet * 14;
-                            }
-                        }
-                    }
+                    await _rouletteRepository.Update(roulette);
                 }
-                else if (minYellowBlueSum == yellowBetsSum) // minSum == minYellowBlueSum && 
+                else if (minSum == blueBetsSum)
                 {
-                    if (blueBetsSum - yellowBetsSum <= yellowBetsSum / 20)
+                    // blue winner
+                    foreach (var bet in blueBets)
                     {
-                        lowerCounter++;
+                        var user = _userRepository.GetAll().FirstOrDefaultAsync(x => x.Id == bet.UserAccountId).Result;
+                        user.Balance += bet.UserBet * 2;
+                        roulette.Balance -= bet.UserBet * 2;
+                        await _userRepository.Update(user);
                     }
-                    if (yellowBetsSum * 2 < blueBetsSum + greenBetsSum)
+                    await _rouletteRepository.Update(roulette);
+                }
+                else
+                {
+                    // yellow winner
+                    foreach (var bet in yellowBets)
                     {
-                        // yellow winner
-                        foreach (var bet in yellowBets)
-                        {
-                            var user = _userRepository.GetAll().FirstOrDefaultAsync(x => x.Id == bet.UserAccountId).Result;
-                            user.Balance += bet.UserBet * 2;
-                        }
+                        var user = _userRepository.GetAll().FirstOrDefaultAsync(x => x.Id == bet.UserAccountId).Result;
+                        user.Balance += bet.UserBet * 2;
+                        roulette.Balance -= bet.UserBet * 2;
+                        await _userRepository.Update(user);
                     }
+                    await _rouletteRepository.Update(roulette);
                 }
             }
             else
             {
-                if (maxSum < 5000)
+                if (midSum == greenBetsSum)
                 {
-                    Random random = new Random();
-                    int tempRandValue = random.Next(1, 3);
-                    if (tempRandValue == 1)
+                    // green winner
+                    foreach (var bet in greenBets)
                     {
-                        // blue winner
-                        foreach (var bet in blueBets)
-                        {
-                            var user = _userRepository.GetAll().FirstOrDefaultAsync(x => x.Id == bet.UserAccountId).Result;
-                            user.Balance += bet.UserBet * 2;
-                        }
+                        var user = _userRepository.GetAll().FirstOrDefaultAsync(x => x.Id == bet.UserAccountId).Result;
+                        user.Balance += bet.UserBet * 14;
+                        await _userRepository.Update(user);
                     }
-                    else if (tempRandValue == 2)
-                    {
-                        // green winner
-                        foreach (var bet in greenBets)
-                        {
-                            var user = _userRepository.GetAll().FirstOrDefaultAsync(x => x.Id == bet.UserAccountId).Result;
-                            user.Balance += bet.UserBet * 14;
-                        }
-                    }
-                    else
-                    {
-                        // yellow winner
-                        foreach (var bet in yellowBets)
-                        {
-                            var user = _userRepository.GetAll().FirstOrDefaultAsync(x => x.Id == bet.UserAccountId).Result;
-                            user.Balance += bet.UserBet * 2;
-                        }
-                    }
+                    await _rouletteRepository.Update(roulette);
                 }
-                else
+                else if (midSum == blueBetsSum)
                 {
-
+                    // blue winner
+                    foreach (var bet in blueBets)
+                    {
+                        var user = _userRepository.GetAll().FirstOrDefaultAsync(x => x.Id == bet.UserAccountId).Result;
+                        user.Balance += bet.UserBet * 2;
+                        await _userRepository.Update(user);
+                    }
+                    await _rouletteRepository.Update(roulette);
+                }
+                else if (midSum == yellowBetsSum)
+                {
+                    // yellow winner
+                    foreach (var bet in yellowBets)
+                    {
+                        var user = _userRepository.GetAll().FirstOrDefaultAsync(x => x.Id == bet.UserAccountId).Result;
+                        user.Balance += bet.UserBet * 2;
+                        await _userRepository.Update(user);
+                    }
+                    await _rouletteRepository.Update(roulette);
                 }
             }
+
             return new BaseResponse<bool>()
             {
-                Data = true, 
+                Data = true,
                 StatusCode = DataProvider.Enums.StatusCode.OK,
-                Description = "SuccessfullyRunApp"
+                Description = "SuccessfullySpin"
             };
         }
     }

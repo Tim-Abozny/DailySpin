@@ -1,6 +1,7 @@
 ﻿using DailySpin.DataProvider.Data;
 using DailySpin.DataProvider.Enums;
 using DailySpin.DataProvider.Interfaces;
+using DailySpin.DataProvider.Models;
 using DailySpin.DataProvider.Response;
 using DailySpin.Logic.Interfaces;
 using DailySpin.ViewModel.ViewModels;
@@ -16,12 +17,15 @@ namespace DailySpin.Logic.Services
         private static IBaseRepository<BetsGlass> _glassRepository;
         private static IBaseRepository<UserAccount> _userRepository;
         private static IBaseRepository<Bet> _betRepository;
+        private static IBaseRepository<Roulette> _rouletteRepository;
         private readonly ILogger _logger;
         public BetsGlassService(IBaseRepository<BetsGlass> glassRepository,
             IBaseRepository<UserAccount> userRepository,
             IBaseRepository<Bet> betRepository,
+            IBaseRepository<Roulette> rouletteRepository,
             ILogger<BetsGlassService> logger)
         {
+            _rouletteRepository = rouletteRepository;
             _glassRepository = glassRepository;
             _userRepository = userRepository;
             _betRepository = betRepository;
@@ -110,7 +114,19 @@ namespace DailySpin.Logic.Services
                 }
 
                 var glass = await _glassRepository.GetAll().FirstOrDefaultAsync(x => x.ColorType == glassColor);
-
+                var roulette = await _rouletteRepository.GetAll().FirstOrDefaultAsync();
+                if (roulette == null)
+                {
+                    Roulette dbRoulette= new Roulette();
+                    dbRoulette.Id = Guid.NewGuid();
+                    dbRoulette.Balance = bet;
+                    await _rouletteRepository.Create(dbRoulette);
+                }
+                else
+                {
+                    roulette.Balance += bet;
+                    await _rouletteRepository.Update(roulette);
+                }
                 user.Balance -= bet;
                 await _userRepository.Update(user);
                 Bet dbBet = new Bet

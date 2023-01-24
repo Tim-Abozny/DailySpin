@@ -9,11 +9,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace DailySpin.Website.Migrations
+namespace DailySpin.DataProvider.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20230110182103_addRep")]
-    partial class addRep
+    [Migration("20230124081238_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -57,13 +57,27 @@ namespace DailySpin.Website.Migrations
                     b.ToTable("Users");
                 });
 
+            modelBuilder.Entity("DailySpin.DataProvider.Models.Roulette", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal>("Balance")
+                        .HasColumnType("decimal(20,0)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Roulettes");
+                });
+
             modelBuilder.Entity("DailySpin.Website.Models.Bet", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("BetsGlassId")
+                    b.Property<Guid>("BetsGlassId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("UserAccountId")
@@ -129,8 +143,8 @@ namespace DailySpin.Website.Migrations
                     b.Property<bool>("WinChip")
                         .HasColumnType("bit");
 
-                    b.Property<int?>("WinChipHistoryId")
-                        .HasColumnType("int");
+                    b.Property<Guid?>("WinChipHistoryId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
@@ -141,11 +155,9 @@ namespace DailySpin.Website.Migrations
 
             modelBuilder.Entity("DailySpin.Website.Models.WinChipHistory", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
@@ -156,7 +168,9 @@ namespace DailySpin.Website.Migrations
                 {
                     b.HasOne("DailySpin.Website.Models.BetsGlass", null)
                         .WithMany("Bets")
-                        .HasForeignKey("BetsGlassId");
+                        .HasForeignKey("BetsGlassId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("DailySpin.Website.Models.Chip", b =>

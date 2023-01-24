@@ -9,6 +9,6 @@ namespace DailySpin.Website.Models
         public Guid Id { get; set; }
         public byte[] Image { get; set; }
         public ChipColor ColorType { get; set; }
-        public uint WinChip { get; set; }
+        public bool WinChip { get; set; }
     }
 }

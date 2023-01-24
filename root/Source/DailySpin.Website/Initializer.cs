@@ -1,5 +1,6 @@
 ﻿using DailySpin.DataProvider.Data;
 using DailySpin.DataProvider.Interfaces;
+using DailySpin.DataProvider.Models;
 using DailySpin.DataProvider.Repository;
 using DailySpin.Logic.Interfaces;
 using DailySpin.Logic.Services;
@@ -14,6 +15,7 @@ namespace DailySpin.Website
             services.AddScoped<IBaseRepository<UserAccount>, UserRepository>();
             services.AddScoped<IBaseRepository<BetsGlass>, BetGlassRepository>();
             services.AddScoped<IBaseRepository<Bet>, BetRepository>();
+            services.AddScoped<IBaseRepository<Roulette>, RouletteRepository>();
         }
 
         public static void InitializeServices(this IServiceCollection services)

@@ -1,4 +1,5 @@
-﻿using DailySpin.Website.Models;
+﻿using DailySpin.DataProvider.Models;
+using DailySpin.Website.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace DailySpin.DataProvider.Data;
@@ -11,6 +12,7 @@ public class AppDbContext : DbContext
     public DbSet<BetsGlass> BetsGlasses { get; set; }
     public DbSet<Bet> Bets { get; set; }
     public DbSet<UserAccount> Users { get; set; }
+    public DbSet<Roulette> Roulettes { get; set; }
     protected override void OnModelCreating(ModelBuilder builder)
     {
         /*byte[] imageArray = File.ReadAllBytes("C:\\Users\\progr\\source\\repos\\C#\\5sem\\trainee\\root\\Source\\DailySpin.Website\\wwwroot\\img\\blueChip.png");*/
