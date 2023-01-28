@@ -16,6 +16,7 @@ namespace DailySpin.Website
             services.AddScoped<IBaseRepository<BetsGlass>, BetGlassRepository>();
             services.AddScoped<IBaseRepository<Bet>, BetRepository>();
             services.AddScoped<IBaseRepository<Roulette>, RouletteRepository>();
+            services.AddScoped<IBaseRepository<Chip>, ChipRepository>();
         }
 
         public static void InitializeServices(this IServiceCollection services)

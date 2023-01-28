@@ -51,7 +51,7 @@ namespace DailySpin.DataProvider.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Users");
+                    b.ToTable("Users", (string)null);
                 });
 
             modelBuilder.Entity("DailySpin.DataProvider.Models.Roulette", b =>
@@ -65,7 +65,7 @@ namespace DailySpin.DataProvider.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Roulettes");
+                    b.ToTable("Roulettes", (string)null);
                 });
 
             modelBuilder.Entity("DailySpin.Website.Models.Bet", b =>
@@ -95,7 +95,7 @@ namespace DailySpin.DataProvider.Migrations
 
                     b.HasIndex("BetsGlassId");
 
-                    b.ToTable("Bets");
+                    b.ToTable("Bets", (string)null);
                 });
 
             modelBuilder.Entity("DailySpin.Website.Models.BetsGlass", b =>
@@ -121,7 +121,7 @@ namespace DailySpin.DataProvider.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("BetsGlasses");
+                    b.ToTable("BetsGlasses", (string)null);
                 });
 
             modelBuilder.Entity("DailySpin.Website.Models.Chip", b =>
@@ -147,7 +147,7 @@ namespace DailySpin.DataProvider.Migrations
 
                     b.HasIndex("WinChipHistoryId");
 
-                    b.ToTable("Chips");
+                    b.ToTable("Chips", (string)null);
                 });
 
             modelBuilder.Entity("DailySpin.Website.Models.WinChipHistory", b =>
@@ -158,7 +158,7 @@ namespace DailySpin.DataProvider.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("WinHistory");
+                    b.ToTable("WinHistory", (string)null);
                 });
 
             modelBuilder.Entity("DailySpin.Website.Models.Bet", b =>

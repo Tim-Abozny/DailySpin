@@ -21,13 +21,14 @@ namespace DailySpin.Website.Controllers
         {
             //await _glassService.ClearGlasses();
             //await _glassService.CreateGlasses();
+
             var model = await _glassService.GetGlasses();
             List<BetsGlassViewModel> retModel = new List<BetsGlassViewModel>();
             foreach (var item in model.Data)
             {
                 retModel.Add(item);
             }
-            await _rouletteService.RunAsync();
+            //await _rouletteService.RunAsync(); use it like background task
             return View(retModel);
         }
         [HttpPost]
