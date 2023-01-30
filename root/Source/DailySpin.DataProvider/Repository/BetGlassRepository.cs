@@ -11,8 +11,8 @@ namespace DailySpin.DataProvider.Repository
         public IQueryable<BetsGlass> GetAll() => _db.BetsGlasses;
         public async Task Create(BetsGlass entity)
         {
-            await _db.BetsGlasses.AddAsync(entity);
-            await _db.SaveChangesAsync();
+            _db.BetsGlasses.Add(entity);
+            _db.SaveChanges();
         }
         public async Task Delete(BetsGlass entity)
         {

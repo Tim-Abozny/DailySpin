@@ -7,6 +7,7 @@ using DailySpin.Logic.Interfaces;
 using DailySpin.ViewModel.ViewModels;
 using DailySpin.Website.Enums;
 using DailySpin.Website.Models;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
@@ -19,16 +20,19 @@ namespace DailySpin.Logic.Services
         private static IBaseRepository<Bet> _betRepository;
         private static IBaseRepository<Roulette> _rouletteRepository;
         private readonly ILogger _logger;
+        private IWebHostEnvironment _environment;
         public BetsGlassService(IBaseRepository<BetsGlass> glassRepository,
             IBaseRepository<UserAccount> userRepository,
             IBaseRepository<Bet> betRepository,
             IBaseRepository<Roulette> rouletteRepository,
+            IWebHostEnvironment environment,
             ILogger<BetsGlassService> logger)
         {
             _rouletteRepository = rouletteRepository;
             _glassRepository = glassRepository;
             _userRepository = userRepository;
             _betRepository = betRepository;
+            _environment = environment;
             _logger = logger;
         }
 
@@ -62,7 +66,7 @@ namespace DailySpin.Logic.Services
 
             foreach (var item in list)
             {
-                var retBet = _betRepository.GetAll().Where<Bet>(x => x.BetsGlassId == item.Id).ToList();
+                var retBet = _betRepository.GetAll().Where(x => x.BetsGlassId == item.Id).ToList();
                 if (item.Bets == null)
                 {
                     retModel.Add(
@@ -117,7 +121,7 @@ namespace DailySpin.Logic.Services
                 var roulette = await _rouletteRepository.GetAll().FirstOrDefaultAsync();
                 if (roulette == null)
                 {
-                    Roulette dbRoulette= new Roulette();
+                    Roulette dbRoulette = new Roulette();
                     dbRoulette.Id = Guid.NewGuid();
                     dbRoulette.Balance = bet;
                     await _rouletteRepository.Create(dbRoulette);
@@ -169,13 +173,13 @@ namespace DailySpin.Logic.Services
                 };
             }
         }
-        public async Task<BaseResponse<bool>> CreateGlasses()
+        public BaseResponse<bool> CreateGlasses()
         {
             try
             {
-                fastCreateGlass("blue", 2, ChipColor.Blue);
-                fastCreateGlass("green", 14, ChipColor.Green);
-                fastCreateGlass("yellow", 2, ChipColor.Yellow);
+                CreateGlass("blue", 2, ChipColor.Blue);
+                CreateGlass("green", 14, ChipColor.Green);
+                CreateGlass("yellow", 2, ChipColor.Yellow);
 
                 return new BaseResponse<bool>()
                 {
@@ -197,10 +201,11 @@ namespace DailySpin.Logic.Services
         }
         private byte[] GetImage(string imgColor)
         {
-            byte[] imageArray = File.ReadAllBytes($"C:\\Users\\progr\\source\\repos\\C#\\5sem\\trainee\\root\\Source\\DailySpin.Website\\wwwroot\\img\\{imgColor}Chip.png");
+            string wwwPath = _environment.WebRootPath;
+            byte[] imageArray = File.ReadAllBytes($"{wwwPath}\\img\\{imgColor}Chip.png");
             return imageArray;
         }
-        private void fastCreateGlass(string colorGlass, ushort betMultiply, ChipColor chipColor)
+        private void CreateGlass(string colorGlass, ushort betMultiply, ChipColor chipColor)
         {
             BetsGlass Glass = new BetsGlass()
             {
