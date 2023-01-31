@@ -19,8 +19,8 @@ namespace DailySpin.Website.Controllers
         }
         public async Task<IActionResult> Index()
         {
-            await _glassService.ClearGlasses();
-            _glassService.CreateGlasses();
+            //await _glassService.ClearGlasses();
+            //_glassService.CreateGlasses();
 
             var model = await _glassService.GetGlasses();
             List<BetsGlassViewModel> retModel = new List<BetsGlassViewModel>();
