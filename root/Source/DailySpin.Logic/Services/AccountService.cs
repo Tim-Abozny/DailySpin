@@ -13,7 +13,7 @@ namespace DailySpin.Logic.Services
 {
     public class AccountService : IAccountService
     {
-        private static IBaseRepository<UserAccount> _userRepository;
+        private readonly IBaseRepository<UserAccount> _userRepository;
         private readonly ILogger<AccountService> _logger;
 
         public AccountService(IBaseRepository<UserAccount> userRepository,

@@ -1,4 +1,5 @@
 using DailySpin.DataProvider.Data;
+using DailySpin.Logic.Services;
 using DailySpin.Website;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
@@ -43,5 +44,18 @@ app.UseAuthorization();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+
+app.MapGet("/", (
+    PeriodicHostedService service) =>
+{
+    return new PeriodicHostedServiceState(service.IsEnabled);
+});
+
+app.MapMethods("/", new[] { "PATCH" }, (
+    PeriodicHostedServiceState state,
+    PeriodicHostedService service) =>
+{
+    service.IsEnabled = state.IsEnabled;
+});
 
 app.Run();

@@ -1,13 +1,13 @@
 ﻿@using DailySpin.ViewModel.ViewModels;
-@model List<BetsGlassViewModel>
+@model RouletteViewModel
 
 @{
     ViewData["Title"] = "Glasses Page";
 }
 
 <div class="page-glasses">
-    <div asp-validation-summary="All" style="font-size:23px; font-family:Aleo" class="text-danger text-center"></div>
-    @foreach (var glass in Model)
+    <div style="font-size:23px; font-family:Aleo" class="text-danger text-center">@Model.Exception</div>
+    @foreach (var glass in Model.ModelList)
     {
         <div class="bets-glass">
             <form method="post" asp-controller="BetsGlass" asp-action="PlaceBet">

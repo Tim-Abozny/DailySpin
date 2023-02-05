@@ -12,6 +12,8 @@ namespace DailySpin.Website.Views.Shared.Components
                 GetService<IAccountService>()
                 .LoadUserData(HttpContext.User.Identity.Name);
 
+            if (request.Result.Data == null)
+                return "NEED TO LOG IN";
             BetViewModel model = request.Result.Data;
             return $"{model.UserName} | Balance: {model.UserBalance} 💰";
         }

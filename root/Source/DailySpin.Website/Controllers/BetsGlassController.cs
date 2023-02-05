@@ -23,19 +23,21 @@ namespace DailySpin.Website.Controllers
             //_glassService.CreateGlasses();
 
             var model = await _glassService.GetGlasses();
-            List<BetsGlassViewModel> retModel = new List<BetsGlassViewModel>();
+            RouletteViewModel roulette = new RouletteViewModel();
+            roulette.ModelList = new List<BetsGlassViewModel>();
             foreach (var item in model.Data)
             {
-                retModel.Add(item);
+                roulette.ModelList.Add(item);
             }
-            //await _rouletteService.RunAsync(); use it like background task
-            return View(retModel);
+            if (TempData["Message"] != null)
+                roulette.Exception = (string)TempData["Message"];
+
+            return View(roulette);
         }
         [HttpPost]
         [Authorize]
         public async Task<IActionResult> PlaceBet(string glassColor, uint bet)
         {
-
             ChipColor color = ChipColor.Blue;
             if (glassColor == "Yellow")
                 color = ChipColor.Yellow;
@@ -46,8 +48,9 @@ namespace DailySpin.Website.Controllers
             if (response.Data == false)
             {
                 ModelState.AddModelError("", response.Description);
-                return View(response.Description);
-            } // need to return view with model's error
+                TempData["Message"] = response.Description;
+                return RedirectToAction("Index");
+            }
             return RedirectToAction("Index");
         }
     }

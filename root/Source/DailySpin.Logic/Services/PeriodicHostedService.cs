@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using DailySpin.Logic.Interfaces;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
@@ -16,6 +17,7 @@ namespace DailySpin.Logic.Services
         {
             _logger = logger;
             _factory = factory;
+            IsEnabled = true;
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -29,7 +31,7 @@ namespace DailySpin.Logic.Services
                     if (IsEnabled)
                     {
                         await using AsyncServiceScope asyncScope = _factory.CreateAsyncScope();
-                        RouletteService rouletteService = asyncScope.ServiceProvider.GetRequiredService<RouletteService>();
+                        IRouletteService rouletteService = asyncScope.ServiceProvider.GetRequiredService<IRouletteService>();
                         await rouletteService.RunAsync();
                         _executionCount++;
                         _logger.LogInformation($"Executed PeriodicHostedService - Count: {_executionCount}");

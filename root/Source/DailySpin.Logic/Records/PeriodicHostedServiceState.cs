@@ -1,3 +1,3 @@
 ﻿namespace DailySpin.Logic.Services;
 
-record PeriodicHostedServiceState(bool IsEnabled);
+public record PeriodicHostedServiceState(bool IsEnabled);

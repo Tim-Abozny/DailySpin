@@ -41,7 +41,7 @@ namespace DailySpin.Logic.Services
             BetsGlass betsGlass;
             for (int i = 0; i < 4; i++)
             {
-                betsGlass = await _glassRepository.GetAll().FirstOrDefaultAsync<BetsGlass>();
+                betsGlass = await _glassRepository.GetAll().FirstOrDefaultAsync();
                 if (betsGlass != null)
                     await _glassRepository.Delete(betsGlass);
             }
@@ -107,12 +107,12 @@ namespace DailySpin.Logic.Services
             try
             {
                 var user = await _userRepository.GetAll().FirstOrDefaultAsync(x => x.DisplayName == loginedUsername);
-                if (bet > user.Balance)
+                if (bet > user.Balance || bet < 1)
                 {
                     return new BaseResponse<bool>()
                     {
                         Data = false,
-                        Description = "Bet higher then balance",
+                        Description = "Bet higher then balance or lower then 1",
                         StatusCode = StatusCode.InternalServerError
                     };
                 }

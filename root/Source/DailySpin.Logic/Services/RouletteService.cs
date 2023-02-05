@@ -12,12 +12,12 @@ namespace DailySpin.Logic.Services
 {
     public class RouletteService : IRouletteService
     {
-        private static IBaseRepository<BetsGlass> _glassRepository;
-        private static IBaseRepository<UserAccount> _userRepository;
-        private static IBaseRepository<Bet> _betRepository;
-        private static IBaseRepository<Roulette> _rouletteRepository;
-        private static IBaseRepository<Chip> _winHistoryRepository;
-        private readonly ILogger _logger;
+        private readonly IBaseRepository<BetsGlass> _glassRepository;
+        private readonly IBaseRepository<UserAccount> _userRepository;
+        private readonly IBaseRepository<Bet> _betRepository;
+        private readonly IBaseRepository<Roulette> _rouletteRepository;
+        private readonly IBaseRepository<Chip> _winHistoryRepository;
+        private readonly ILogger<RouletteService> _logger;
         public RouletteService(IBaseRepository<BetsGlass> glassRepository,
             IBaseRepository<UserAccount> userRepository,
             IBaseRepository<Bet> betRepository,
@@ -34,19 +34,47 @@ namespace DailySpin.Logic.Services
         }
         public async Task<BaseResponse<bool>> RunAsync()
         {
-            var colorBlueID = _glassRepository.GetAll().FirstOrDefault(x => x.ColorType == ChipColor.Blue).Id;
-            var colorGreenID = _glassRepository.GetAll().FirstOrDefault(x => x.ColorType == ChipColor.Green).Id;
-            var colorYellowID = _glassRepository.GetAll().FirstOrDefault(x => x.ColorType == ChipColor.Yellow).Id;
-            var blueBets = await _betRepository.GetAll().Where(x => x.BetsGlassId == colorBlueID).ToListAsync();
-            var greenBets = await _betRepository.GetAll().Where(x => x.BetsGlassId == colorGreenID).ToListAsync();
-            var yellowBets = await _betRepository.GetAll().Where(x => x.BetsGlassId == colorYellowID).ToListAsync();
+            var dbBets = _betRepository.GetAll();
+            var dbGlasses = _glassRepository.GetAll();
+            Guid colorBlueID = Guid.Empty;   // = _glassRepository.GetAll().FirstOrDefault(x => x.ColorType == ChipColor.Blue).Id;
+            Guid colorGreenID = Guid.Empty;  // = _glassRepository.GetAll().FirstOrDefault(x => x.ColorType == ChipColor.Green).Id;
+            Guid colorYellowID = Guid.Empty; // = _glassRepository.GetAll().FirstOrDefault(x => x.ColorType == ChipColor.Yellow).Id;
+            foreach (var glass in dbGlasses)
+            {
+                if (glass.ColorType == ChipColor.Blue)
+                {
+                    colorBlueID = glass.Id;
+                }
+                else if (glass.ColorType == ChipColor.Green)
+                {
+                    colorGreenID = glass.Id;
+                }
+                else
+                {
+                    colorYellowID = glass.Id;
+                }
+            }
+            List<Bet> blueBets = dbBets.Where(x => x.BetsGlassId == colorBlueID).ToList();
+            List<Bet> greenBets = dbBets.Where(x => x.BetsGlassId == colorGreenID).ToList();
+            List<Bet> yellowBets = dbBets.Where(x => x.BetsGlassId == colorYellowID).ToList();
+            //var blueBets = await _betRepository.GetAll().Where(x => x.BetsGlassId == colorBlueID).ToListAsync();
+            //var greenBets = await _betRepository.GetAll().Where(x => x.BetsGlassId == colorGreenID).ToListAsync();
+            //var yellowBets = await _betRepository.GetAll().Where(x => x.BetsGlassId == colorYellowID).ToListAsync();
             if (blueBets.Count == 0 && greenBets.Count == 0 && yellowBets.Count == 0)
             {
+                _logger.LogInformation("This spin was empty");
+                _logger.LogInformation($"-----------------------------------------");
+                _logger.LogInformation($"blueBets.Count :\t{blueBets.Count}");
+                _logger.LogInformation($"greenBets.Count :\t{greenBets.Count}");
+                _logger.LogInformation($"yellowBets.Count :\t{yellowBets.Count}");
+                _logger.LogInformation($"-----------------------------------------");
+                _logger.LogInformation($"dbBets.Count :\t{dbBets.Count()}");
+                _logger.LogInformation($"-----------------------------------------");
                 return new BaseResponse<bool>()
                 {
                     Data = true,
                     StatusCode = DataProvider.Enums.StatusCode.OK,
-                    Description = "EmptySpin"
+                    Description = "EmptySpin",
                 };
             }
             var roulette = await _rouletteRepository.GetAll().FirstOrDefaultAsync();
@@ -62,8 +90,8 @@ namespace DailySpin.Logic.Services
                 if (minSum == greenBetsSum)
                 {
                     // green winner
-                    var greenImage = _glassRepository.GetAll().FirstOrDefault(x => x.ColorType == ChipColor.Green).GlassImage;
-                    await AddToWinHistoryAsync(ChipColor.Green, greenImage);
+                    var greenImage = await _glassRepository.GetAll().FirstOrDefaultAsync(x => x.ColorType == ChipColor.Green);
+                    await AddToWinHistoryAsync(ChipColor.Green, greenImage.GlassImage);
                     foreach (var bet in greenBets)
                     {
                         var user = _userRepository.GetAll().FirstOrDefaultAsync(x => x.Id == bet.UserAccountId).Result;
@@ -76,8 +104,8 @@ namespace DailySpin.Logic.Services
                 else if (minSum == blueBetsSum)
                 {
                     // blue winner
-                    var blueImage = _glassRepository.GetAll().FirstOrDefault(x => x.ColorType == ChipColor.Blue).GlassImage;
-                    await AddToWinHistoryAsync(ChipColor.Green, blueImage);
+                    var blueImage = await _glassRepository.GetAll().FirstOrDefaultAsync(x => x.ColorType == ChipColor.Blue);
+                    await AddToWinHistoryAsync(ChipColor.Green, blueImage.GlassImage);
                     foreach (var bet in blueBets)
                     {
                         var user = _userRepository.GetAll().FirstOrDefault(x => x.Id == bet.UserAccountId);
@@ -90,8 +118,8 @@ namespace DailySpin.Logic.Services
                 else
                 {
                     // yellow winner
-                    var yellowImage = _glassRepository.GetAll().FirstOrDefault(x => x.ColorType == ChipColor.Yellow).GlassImage;
-                    await AddToWinHistoryAsync(ChipColor.Green, yellowImage);
+                    var yellowImage = await _glassRepository.GetAll().FirstOrDefaultAsync(x => x.ColorType == ChipColor.Yellow);
+                    await AddToWinHistoryAsync(ChipColor.Green, yellowImage.GlassImage);
                     foreach (var bet in yellowBets)
                     {
                         var user = _userRepository.GetAll().FirstOrDefault(x => x.Id == bet.UserAccountId);
@@ -107,8 +135,8 @@ namespace DailySpin.Logic.Services
                 if (midSum == greenBetsSum)
                 {
                     // green winner
-                    var greenImage = _glassRepository.GetAll().FirstOrDefault(x => x.ColorType == ChipColor.Green).GlassImage;
-                    await AddToWinHistoryAsync(ChipColor.Green, greenImage);
+                    var greenImage = await _glassRepository.GetAll().FirstOrDefaultAsync(x => x.ColorType == ChipColor.Green);
+                    await AddToWinHistoryAsync(ChipColor.Green, greenImage.GlassImage);
                     foreach (var bet in greenBets)
                     {
                         var user = _userRepository.GetAll().FirstOrDefault(x => x.Id == bet.UserAccountId);
@@ -120,8 +148,8 @@ namespace DailySpin.Logic.Services
                 else if (midSum == blueBetsSum)
                 {
                     // blue winner
-                    var blueImage = _glassRepository.GetAll().FirstOrDefault(x => x.ColorType == ChipColor.Blue).GlassImage;
-                    await AddToWinHistoryAsync(ChipColor.Green, blueImage);
+                    var blueImage = await _glassRepository.GetAll().FirstOrDefaultAsync(x => x.ColorType == ChipColor.Blue);
+                    await AddToWinHistoryAsync(ChipColor.Green, blueImage.GlassImage);
                     foreach (var bet in blueBets)
                     {
                         var user = _userRepository.GetAll().FirstOrDefaultAsync(x => x.Id == bet.UserAccountId).Result;
@@ -133,8 +161,8 @@ namespace DailySpin.Logic.Services
                 else if (midSum == yellowBetsSum)
                 {
                     // yellow winner
-                    var yellowImage = _glassRepository.GetAll().FirstOrDefault(x => x.ColorType == ChipColor.Yellow).GlassImage;
-                    await AddToWinHistoryAsync(ChipColor.Green, yellowImage);
+                    var yellowImage = await _glassRepository.GetAll().FirstOrDefaultAsync(x => x.ColorType == ChipColor.Yellow);
+                    await AddToWinHistoryAsync(ChipColor.Green, yellowImage.GlassImage);
                     foreach (var bet in yellowBets)
                     {
                         var user = _userRepository.GetAll().FirstOrDefault(x => x.Id == bet.UserAccountId);
@@ -144,7 +172,15 @@ namespace DailySpin.Logic.Services
                     await _rouletteRepository.Update(roulette);
                 }
             }
-            ClearBetsAsync();
+            await ClearBetsAsync();
+            _logger.LogInformation($"This spin was successfull");
+            _logger.LogInformation($"-----------------------------------------");
+            _logger.LogInformation($"blueBets.Count :\t{blueBets.Count}");
+            _logger.LogInformation($"greenBets.Count :\t{greenBets.Count}");
+            _logger.LogInformation($"yellowBets.Count :\t{yellowBets.Count}");
+            _logger.LogInformation($"-----------------------------------------");
+            _logger.LogInformation($"dbBets.Count :\t{dbBets.Count()}");
+            _logger.LogInformation($"-----------------------------------------");
             return new BaseResponse<bool>()
             {
                 Data = true,
@@ -152,9 +188,9 @@ namespace DailySpin.Logic.Services
                 Description = "SuccessfullySpin"
             };
         }
-        private async void ClearBetsAsync()
+        private async Task ClearBetsAsync()
         {
-            var bets = await _betRepository.GetAll().ToListAsync();
+            var bets = _betRepository.GetAll();
             foreach (var bet in bets)
             {
                 await _betRepository.Delete(bet);
