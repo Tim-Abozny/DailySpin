@@ -1,6 +1,5 @@
-﻿using DailySpin.DataProvider.Data;
+﻿using DailySpin.DataProvider;
 using DailySpin.DataProvider.Enums;
-using DailySpin.DataProvider.Interfaces;
 using DailySpin.DataProvider.Models;
 using DailySpin.DataProvider.Response;
 using DailySpin.Logic.Interfaces;
@@ -15,23 +14,15 @@ namespace DailySpin.Logic.Services
 {
     public class BetsGlassService : IBetsGlassService
     {
-        private static IBaseRepository<BetsGlass> _glassRepository;
-        private static IBaseRepository<UserAccount> _userRepository;
-        private static IBaseRepository<Bet> _betRepository;
-        private static IBaseRepository<Roulette> _rouletteRepository;
+        private const ushort betsGlassCounter = 4;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly ILogger _logger;
         private IWebHostEnvironment _environment;
-        public BetsGlassService(IBaseRepository<BetsGlass> glassRepository,
-            IBaseRepository<UserAccount> userRepository,
-            IBaseRepository<Bet> betRepository,
-            IBaseRepository<Roulette> rouletteRepository,
+        public BetsGlassService(IUnitOfWork unitOfWork,
             IWebHostEnvironment environment,
             ILogger<BetsGlassService> logger)
         {
-            _rouletteRepository = rouletteRepository;
-            _glassRepository = glassRepository;
-            _userRepository = userRepository;
-            _betRepository = betRepository;
+            _unitOfWork = unitOfWork;
             _environment = environment;
             _logger = logger;
         }
@@ -39,12 +30,13 @@ namespace DailySpin.Logic.Services
         public async Task<BaseResponse<bool>> ClearGlasses()
         {
             BetsGlass betsGlass;
-            for (int i = 0; i < 4; i++)
+            for (int i = 0; i < betsGlassCounter; i++)
             {
-                betsGlass = await _glassRepository.GetAll().FirstOrDefaultAsync();
+                betsGlass = await _unitOfWork.BetGlassRepository.GetAll().FirstAsync();
                 if (betsGlass != null)
-                    await _glassRepository.Delete(betsGlass);
+                    _unitOfWork.BetGlassRepository.Delete(betsGlass);
             }
+            _unitOfWork.Commit();
             return new BaseResponse<bool>()
             {
                 Data = true
@@ -52,7 +44,7 @@ namespace DailySpin.Logic.Services
         }
         public async Task<BaseResponse<List<BetsGlassViewModel>>> GetGlasses()
         {
-            var list = await _glassRepository.GetAll().ToListAsync();
+            var list = await _unitOfWork.BetGlassRepository.GetAll().ToListAsync();
             if (list == null)
             {
                 return new BaseResponse<List<BetsGlassViewModel>>()
@@ -66,23 +58,8 @@ namespace DailySpin.Logic.Services
 
             foreach (var item in list)
             {
-                var retBet = _betRepository.GetAll().Where(x => x.BetsGlassId == item.Id).ToList();
-                if (item.Bets == null)
-                {
-                    retModel.Add(
-                    new BetsGlassViewModel()
-                    {
-                        BetMultiply = item.BetMultiply,
-                        GlassImage = item.GlassImage,
-                        ColorType = item.ColorType,
-                        Bets = retBet,
-                        TotalBetSum = item.TotalBetSum
-                    }
-                    );
-                }
-                else
-                {
-                    retModel.Add(
+                var retBet = _unitOfWork.BetRepository.GetAll().Where(x => x.BetsGlassId == item.Id).ToList();
+                retModel.Add(
                     new BetsGlassViewModel()
                     {
                         BetMultiply = item.BetMultiply,
@@ -92,9 +69,8 @@ namespace DailySpin.Logic.Services
                         TotalBetSum = item.TotalBetSum
                     }
                     );
-                }
             }
-
+            _unitOfWork.Commit();
             return new BaseResponse<List<BetsGlassViewModel>>()
             {
                 Data = retModel,
@@ -106,7 +82,7 @@ namespace DailySpin.Logic.Services
         {
             try
             {
-                var user = await _userRepository.GetAll().FirstOrDefaultAsync(x => x.DisplayName == loginedUsername);
+                var user = await _unitOfWork.UserRepository.GetAll().FirstAsync(x => x.DisplayName == loginedUsername);
                 if (bet > user.Balance || bet < 1)
                 {
                     return new BaseResponse<bool>()
@@ -117,43 +93,38 @@ namespace DailySpin.Logic.Services
                     };
                 }
 
-                var glass = await _glassRepository.GetAll().FirstOrDefaultAsync(x => x.ColorType == glassColor);
-                var roulette = await _rouletteRepository.GetAll().FirstOrDefaultAsync();
+                var glass = await _unitOfWork.BetGlassRepository.GetAll().FirstAsync(x => x.ColorType == glassColor);
+                var roulette = await _unitOfWork.RouletteRepository.GetAll().FirstAsync();
                 if (roulette == null)
                 {
                     Roulette dbRoulette = new Roulette();
                     dbRoulette.Id = Guid.NewGuid();
                     dbRoulette.Balance = bet;
-                    await _rouletteRepository.Create(dbRoulette);
+                    _unitOfWork.RouletteRepository.Create(dbRoulette);
                 }
                 else
                 {
                     roulette.Balance += bet;
-                    await _rouletteRepository.Update(roulette);
+                    _unitOfWork.RouletteRepository.Update(roulette);
                 }
                 user.Balance -= bet;
-                await _userRepository.Update(user);
+                _unitOfWork.UserRepository.Update(user);
                 Bet dbBet = new Bet
                 {
                     Id = Guid.NewGuid(),
                     UserAccountId = user.Id,
                     UserBet = bet,
-                    UserImage = user.Image,
+                    UserImage = user.Image!,
                     UserName = user.DisplayName,
                     BetsGlassId = glass.Id
                 };
-                await _betRepository.Create(dbBet);
+                _unitOfWork.BetRepository.Create(dbBet);
 
                 if (glass.Bets == null)
-                {
-                    glass.Bets = new List<Bet> { dbBet };
-                    await _glassRepository.Update(glass);
-                }
-                else
-                {
-                    glass.Bets.Add(dbBet);
-                    await _glassRepository.Update(glass);
-                }
+                    glass.Bets = new List<Bet>();
+                glass.Bets.Add(dbBet);
+                _unitOfWork.BetGlassRepository.Update(glass);
+                _unitOfWork.Commit();
 
                 return new BaseResponse<bool>()
                 {
@@ -180,7 +151,7 @@ namespace DailySpin.Logic.Services
                 CreateGlass("blue", 2, ChipColor.Blue);
                 CreateGlass("green", 14, ChipColor.Green);
                 CreateGlass("yellow", 2, ChipColor.Yellow);
-
+                _unitOfWork.Commit();
                 return new BaseResponse<bool>()
                 {
                     Data = true,
@@ -217,7 +188,7 @@ namespace DailySpin.Logic.Services
                 GlassImage = GetImage(colorGlass),
                 ColorType = chipColor
             };
-            _glassRepository.Create(Glass);
+            _unitOfWork.BetGlassRepository.Create(Glass);
         }
     }
 }

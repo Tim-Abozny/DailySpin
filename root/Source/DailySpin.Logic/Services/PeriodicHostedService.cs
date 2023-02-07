@@ -28,18 +28,12 @@ namespace DailySpin.Logic.Services
             {
                 try
                 {
-                    if (IsEnabled)
-                    {
-                        await using AsyncServiceScope asyncScope = _factory.CreateAsyncScope();
-                        IRouletteService rouletteService = asyncScope.ServiceProvider.GetRequiredService<IRouletteService>();
-                        await rouletteService.RunAsync();
-                        _executionCount++;
-                        _logger.LogInformation($"Executed PeriodicHostedService - Count: {_executionCount}");
-                    }
-                    else
-                    {
-                        _logger.LogInformation("Skipped PeriodicHostedService");
-                    }
+                    await using AsyncServiceScope asyncScope = _factory.CreateAsyncScope();
+                    IRouletteService rouletteService = asyncScope.ServiceProvider.GetRequiredService<IRouletteService>();
+                    await rouletteService.RunAsync();
+                    _executionCount++;
+                    _logger.LogInformation($"Executed PeriodicHostedService - Count: {_executionCount}");
+
                 }
                 catch (Exception ex)
                 {

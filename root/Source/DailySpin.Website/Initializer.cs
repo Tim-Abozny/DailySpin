@@ -1,4 +1,5 @@
-﻿using DailySpin.DataProvider.Data;
+﻿using DailySpin.DataProvider;
+using DailySpin.DataProvider.Data;
 using DailySpin.DataProvider.Interfaces;
 using DailySpin.DataProvider.Models;
 using DailySpin.DataProvider.Repository;
@@ -25,6 +26,7 @@ namespace DailySpin.Website
             services.AddScoped<IBetsGlassService, BetsGlassService>();
             services.AddScoped<IBetService, BetService>();
             services.AddScoped<IRouletteService, RouletteService>();
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddSingleton<PeriodicHostedService>();
             services.AddHostedService(
                 provider => provider.GetRequiredService<PeriodicHostedService>());

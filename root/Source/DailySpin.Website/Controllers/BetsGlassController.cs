@@ -9,13 +9,10 @@ namespace DailySpin.Website.Controllers
     public class BetsGlassController : Controller
     {
         private readonly IBetsGlassService _glassService;
-        private readonly IRouletteService _rouletteService;
 
-        public BetsGlassController(IBetsGlassService glassService,
-            IRouletteService rouletteService)
+        public BetsGlassController(IBetsGlassService glassService)
         {
             _glassService = glassService;
-            _rouletteService = rouletteService;
         }
         public async Task<IActionResult> Index()
         {
@@ -47,9 +44,7 @@ namespace DailySpin.Website.Controllers
 
             if (response.Data == false)
             {
-                ModelState.AddModelError("", response.Description);
                 TempData["Message"] = response.Description;
-                return RedirectToAction("Index");
             }
             return RedirectToAction("Index");
         }

@@ -1,7 +1,7 @@
-﻿using DailySpin.DataProvider.Data;
+﻿using DailySpin.DataProvider;
+using DailySpin.DataProvider.Data;
 using DailySpin.DataProvider.Enums;
 using DailySpin.DataProvider.Helpers;
-using DailySpin.DataProvider.Interfaces;
 using DailySpin.DataProvider.Response;
 using DailySpin.Logic.Interfaces;
 using DailySpin.ViewModel.ViewModels;
@@ -13,13 +13,13 @@ namespace DailySpin.Logic.Services
 {
     public class AccountService : IAccountService
     {
-        private readonly IBaseRepository<UserAccount> _userRepository;
+        public IUnitOfWork _unitOfWork;
         private readonly ILogger<AccountService> _logger;
 
-        public AccountService(IBaseRepository<UserAccount> userRepository,
+        public AccountService(IUnitOfWork unitOfWork,
             ILogger<AccountService> logger)
         {
-            _userRepository = userRepository;
+            _unitOfWork = unitOfWork;
             _logger = logger;
         }
 
@@ -27,8 +27,8 @@ namespace DailySpin.Logic.Services
         {
             try
             {
-                var user = await _userRepository.GetAll().FirstOrDefaultAsync(x => x.Email == model.Email);
-                var userName = await _userRepository.GetAll().FirstOrDefaultAsync(x => x.DisplayName == model.Nickname);
+                var user = await _unitOfWork.UserRepository.GetAll().FirstAsync(x => x.Email == model.Email);
+                var userName = await _unitOfWork.UserRepository.GetAll().FirstAsync(x => x.DisplayName == model.Nickname);
                 if (user != null)
                 {
                     return new BaseResponse<ClaimsIdentity>()
@@ -53,13 +53,13 @@ namespace DailySpin.Logic.Services
                     Email = model.Email,
                     DisplayName = model.Nickname,
                     Role = Role.User,
-                    Password = HashPasswordHelper.HashPassowrd(model.Password),
+                    Password = HashPasswordHelper.HashPassword(model.Password),
                     Balance = 0,
                     Image = data
                 };
-                await _userRepository.Create(user);
+                _unitOfWork.UserRepository.Create(user);
                 var result = Authenticate(user);
-
+                _unitOfWork.Commit();
                 return new BaseResponse<ClaimsIdentity>()
                 {
                     Data = result,
@@ -69,7 +69,7 @@ namespace DailySpin.Logic.Services
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"[Register]: {ex.Message}");
+                _logger.LogError(ex, $"[Register]: {ex.Message}"); // небезопасно | много инфы
                 return new BaseResponse<ClaimsIdentity>()
                 {
                     Description = ex.Message,
@@ -82,7 +82,7 @@ namespace DailySpin.Logic.Services
         {
             try
             {
-                var user = await _userRepository.GetAll().FirstOrDefaultAsync(x => x.Email == model.Email);
+                var user = await _unitOfWork.UserRepository.GetAll().FirstAsync(x => x.Email == model.Email);
                 if (user == null)
                 {
                     return new BaseResponse<ClaimsIdentity>()
@@ -91,7 +91,7 @@ namespace DailySpin.Logic.Services
                     };
                 }
 
-                if (user.Password != HashPasswordHelper.HashPassowrd(model.Password))
+                if (user.Password != HashPasswordHelper.HashPassword(model.Password))
                 {
                     return new BaseResponse<ClaimsIdentity>()
                     {
@@ -121,7 +121,7 @@ namespace DailySpin.Logic.Services
         {
             try
             {
-                var user = await _userRepository.GetAll().FirstOrDefaultAsync(x => x.Email == model.Email);
+                var user = await _unitOfWork.UserRepository.GetAll().FirstAsync(x => x.Email == model.Email);
                 if (user == null)
                 {
                     return new BaseResponse<bool>()
@@ -131,9 +131,9 @@ namespace DailySpin.Logic.Services
                     };
                 }
 
-                user.Password = HashPasswordHelper.HashPassowrd(model.NewPassword);
-                await _userRepository.Update(user);
-
+                user.Password = HashPasswordHelper.HashPassword(model.NewPassword);
+                _unitOfWork.UserRepository.Update(user);
+                _unitOfWork.Commit();
                 return new BaseResponse<bool>()
                 {
                     Data = true,
@@ -169,13 +169,13 @@ namespace DailySpin.Logic.Services
         {
             try
             {
-                var user = await _userRepository.GetAll().FirstOrDefaultAsync(x => x.DisplayName == loginedUser);
+                var user = await _unitOfWork.UserRepository.GetAll().FirstAsync(x => x.DisplayName == loginedUser);
                 if (user == null)
                 {
                     return new BaseResponse<BetViewModel>()
                     {
                         Description = "ERROR IN LoadUserData",
-                        StatusCode = StatusCode.InternalServerError
+                        StatusCode = StatusCode.UserNotFound
                     };
                 }
                 BetViewModel returnedUser = new BetViewModel();
@@ -205,8 +205,8 @@ namespace DailySpin.Logic.Services
         {
             try
             {
-                var user = await _userRepository.GetAll().FirstOrDefaultAsync(x => x.DisplayName == loginedUser);
-                if (user == null || sum < 0)
+                var user = await _unitOfWork.UserRepository.GetAll().FirstAsync(x => x.DisplayName == loginedUser);
+                if (user == null || sum < 1)
                 {
                     return new BaseResponse<bool>()
                     {
@@ -216,7 +216,8 @@ namespace DailySpin.Logic.Services
                     };
                 }
                 user.Balance += sum;
-                await _userRepository.Update(user);
+                _unitOfWork.UserRepository.Update(user);
+                _unitOfWork.Commit();
                 return new BaseResponse<bool>()
                 {
                     Data = true,
@@ -241,8 +242,8 @@ namespace DailySpin.Logic.Services
         {
             try
             {
-                var user = await _userRepository.GetAll().FirstOrDefaultAsync(x => x.DisplayName == loginedUser);
-                if (user == null || sum < 0)
+                var user = await _unitOfWork.UserRepository.GetAll().FirstAsync(x => x.DisplayName == loginedUser);
+                if (user == null || sum < 1)
                 {
                     return new BaseResponse<bool>()
                     {
@@ -254,8 +255,9 @@ namespace DailySpin.Logic.Services
                 if (sum <= user.Balance)
                 {
                     user.Balance -= sum;
-                    await _userRepository.Update(user);
+                    _unitOfWork.UserRepository.Update(user);
                 }
+                _unitOfWork.Commit();
                 return new BaseResponse<bool>()
                 {
                     Data = true,

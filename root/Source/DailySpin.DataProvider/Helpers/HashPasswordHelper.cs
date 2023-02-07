@@ -5,7 +5,7 @@ namespace DailySpin.DataProvider.Helpers
 {
     public static class HashPasswordHelper
     {
-        public static string HashPassowrd(string password)
+        public static string HashPassword(string password)
         {
             using (var sha256 = SHA256.Create())
             {

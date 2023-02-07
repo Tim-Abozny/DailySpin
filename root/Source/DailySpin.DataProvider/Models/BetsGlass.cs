@@ -11,7 +11,7 @@ namespace DailySpin.Website.Models
         public ushort BetMultiply { get; set; }
         public uint BetsCount { get; set; }
         public ulong TotalBetSum { get; set; }
-        public List<Bet>? Bets { get; set; }
+        public virtual List<Bet>? Bets { get; set; }
         public ChipColor ColorType { get; set; }
     }
 }

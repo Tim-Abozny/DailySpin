@@ -25,7 +25,7 @@ namespace DailySpin.Website.Controllers
             if (ModelState.IsValid)
             {
                 var response = await _accountService.Register(model);
-                if (response.StatusCode == DataProvider.Enums.StatusCode.OK)
+                if (response.StatusCode == DataProvider.Enums.StatusCode.OK) // class Result
                 {
                     await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
                         new ClaimsPrincipal(response.Data));

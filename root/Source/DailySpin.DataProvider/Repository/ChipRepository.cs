@@ -4,9 +4,9 @@ using DailySpin.Website.Models;
 
 namespace DailySpin.DataProvider.Repository
 {
-    public class BetGlassRepository : BaseRepository<BetsGlass>, IBetGlassRepository
+    public class ChipRepository : BaseRepository<Chip>, IChipRepository
     {
-        public BetGlassRepository(AppDbContext dbContext) : base(dbContext)
+        public ChipRepository(AppDbContext dbContext) : base(dbContext)
         {
         }
     }
