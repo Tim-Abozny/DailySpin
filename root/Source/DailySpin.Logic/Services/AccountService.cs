@@ -67,12 +67,11 @@ namespace DailySpin.Logic.Services
                     StatusCode = StatusCode.OK
                 };
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                _logger.LogError(ex, $"[Register]: {ex.Message}"); // небезопасно | много инфы
                 return new BaseResponse<ClaimsIdentity>()
                 {
-                    Description = ex.Message,
+                    Description = "[Register]: FATAL ERROR",
                     StatusCode = StatusCode.InternalServerError
                 };
             }
@@ -106,12 +105,11 @@ namespace DailySpin.Logic.Services
                     StatusCode = StatusCode.OK
                 };
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                _logger.LogError(ex, $"[Login]: {ex.Message}");
                 return new BaseResponse<ClaimsIdentity>()
                 {
-                    Description = ex.Message,
+                    Description = "[Login]: FATAL ERROR",
                     StatusCode = StatusCode.InternalServerError
                 };
             }
@@ -142,12 +140,11 @@ namespace DailySpin.Logic.Services
                 };
 
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                _logger.LogError(ex, $"[ChangePassword]: {ex.Message}");
                 return new BaseResponse<bool>()
                 {
-                    Description = ex.Message,
+                    Description = "[ChangePassword]: FATAL ERROR",
                     StatusCode = StatusCode.InternalServerError
                 };
             }
@@ -174,7 +171,7 @@ namespace DailySpin.Logic.Services
                 {
                     return new BaseResponse<BetViewModel>()
                     {
-                        Description = "ERROR IN LoadUserData",
+                        Description = "No any users",
                         StatusCode = StatusCode.UserNotFound
                     };
                 }
@@ -190,12 +187,11 @@ namespace DailySpin.Logic.Services
                 };
 
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                _logger.LogError(ex, $"[LoadUserData]: {ex.Message}");
                 return new BaseResponse<BetViewModel>()
                 {
-                    Description = ex.Message,
+                    Description = "[LoadUserData]: FATAL ERROR",
                     StatusCode = StatusCode.InternalServerError
                 };
             }
@@ -211,7 +207,7 @@ namespace DailySpin.Logic.Services
                     return new BaseResponse<bool>()
                     {
                         Data = false,
-                        Description = "ERROR IN Deposit",
+                        Description = "No any users or sum < 1",
                         StatusCode = StatusCode.InternalServerError
                     };
                 }
@@ -226,13 +222,12 @@ namespace DailySpin.Logic.Services
                 };
 
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                _logger.LogError(ex, $"[Deposit]: {ex.Message}");
                 return new BaseResponse<bool>()
                 {
                     Data = false,
-                    Description = ex.Message,
+                    Description = "[Deposit]: FATAL ERROR",
                     StatusCode = StatusCode.InternalServerError
                 };
             }
@@ -248,7 +243,7 @@ namespace DailySpin.Logic.Services
                     return new BaseResponse<bool>()
                     {
                         Data = false,
-                        Description = "ERROR IN Withdraw",
+                        Description = "No any users or sum < 1",
                         StatusCode = StatusCode.InternalServerError
                     };
                 }
@@ -266,13 +261,12 @@ namespace DailySpin.Logic.Services
                 };
 
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                _logger.LogError(ex, $"[Withdraw]: {ex.Message}");
                 return new BaseResponse<bool>()
                 {
                     Data = false,
-                    Description = ex.Message,
+                    Description = "[Withdraw]: FATAL ERROR",
                     StatusCode = StatusCode.InternalServerError
                 };
             }

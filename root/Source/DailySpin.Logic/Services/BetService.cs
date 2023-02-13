@@ -1,7 +1,4 @@
-﻿using DailySpin.DataProvider.Interfaces;
-using DailySpin.Logic.Interfaces;
-using DailySpin.Website.Models;
-using Microsoft.Extensions.Logging;
+﻿using DailySpin.Logic.Interfaces;
 
 namespace DailySpin.Logic.Services
 {

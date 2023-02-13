@@ -1,4 +1,5 @@
 ﻿using DailySpin.DataProvider;
+using DailySpin.DataProvider.Models;
 using DailySpin.DataProvider.Response;
 using DailySpin.Logic.Interfaces;
 using DailySpin.Website.Enums;
@@ -46,14 +47,6 @@ namespace DailySpin.Logic.Services
 
             if (blueBets.Count == 0 && greenBets.Count == 0 && yellowBets.Count == 0)
             {
-                _logger.LogInformation("This spin was empty");
-                _logger.LogInformation($"-----------------------------------------");
-                _logger.LogInformation($"blueBets.Count :\t{blueBets.Count}");
-                _logger.LogInformation($"greenBets.Count :\t{greenBets.Count}");
-                _logger.LogInformation($"yellowBets.Count :\t{yellowBets.Count}");
-                _logger.LogInformation($"-----------------------------------------");
-                _logger.LogInformation($"dbBets.Count :\t{dbBets.Count()}");
-                _logger.LogInformation($"-----------------------------------------");
                 return new BaseResponse<bool>()
                 {
                     Data = true,
@@ -74,44 +67,17 @@ namespace DailySpin.Logic.Services
                 if (minSum == greenBetsSum)
                 {
                     // green winner
-                    var greenImage = await _unitOfWork.BetGlassRepository.GetAll().FirstAsync(x => x.ColorType == ChipColor.Green);
-                    await AddWinChipAsync(ChipColor.Green, greenImage.GlassImage);
-                    foreach (var bet in greenBets)
-                    {
-                        var user = _unitOfWork.UserRepository.GetAll().FirstAsync(x => x.Id == bet.UserAccountId).Result;
-                        user.Balance += bet.UserBet * 14;
-                        roulette.Balance -= bet.UserBet * 14;
-                        _unitOfWork.UserRepository.Update(user);
-                    }
-                    _unitOfWork.RouletteRepository.Update(roulette);
+                    SetWinner(ChipColor.Green, greenBets, roulette, 14);
                 }
                 else if (minSum == blueBetsSum)
                 {
                     // blue winner
-                    var blueImage = await _unitOfWork.BetGlassRepository.GetAll().FirstAsync(x => x.ColorType == ChipColor.Blue);
-                    await AddWinChipAsync(ChipColor.Blue, blueImage.GlassImage);
-                    foreach (var bet in blueBets)
-                    {
-                        var user = _unitOfWork.UserRepository.GetAll().First(x => x.Id == bet.UserAccountId);
-                        user.Balance += bet.UserBet * 2;
-                        roulette.Balance -= bet.UserBet * 2;
-                        _unitOfWork.UserRepository.Update(user);
-                    }
-                    _unitOfWork.RouletteRepository.Update(roulette);
+                    SetWinner(ChipColor.Blue, blueBets, roulette, 2);
                 }
                 else
                 {
                     // yellow winner
-                    var yellowImage = await _unitOfWork.BetGlassRepository.GetAll().FirstAsync(x => x.ColorType == ChipColor.Yellow);
-                    await AddWinChipAsync(ChipColor.Yellow, yellowImage.GlassImage);
-                    foreach (var bet in yellowBets)
-                    {
-                        var user = _unitOfWork.UserRepository.GetAll().First(x => x.Id == bet.UserAccountId);
-                        user.Balance += bet.UserBet * 2;
-                        roulette.Balance -= bet.UserBet * 2;
-                        _unitOfWork.UserRepository.Update(user);
-                    }
-                    _unitOfWork.RouletteRepository.Update(roulette);
+                    SetWinner(ChipColor.Yellow, yellowBets, roulette, 2);
                 }
             }
             else
@@ -119,52 +85,20 @@ namespace DailySpin.Logic.Services
                 if (midSum == greenBetsSum)
                 {
                     // green winner
-                    var greenImage = await _unitOfWork.BetGlassRepository.GetAll().FirstAsync(x => x.ColorType == ChipColor.Green);
-                    await AddWinChipAsync(ChipColor.Green, greenImage.GlassImage);
-                    foreach (var bet in greenBets)
-                    {
-                        var user = _unitOfWork.UserRepository.GetAll().First(x => x.Id == bet.UserAccountId);
-                        user.Balance += bet.UserBet * 14;
-                        _unitOfWork.UserRepository.Update(user);
-                    }
-                    _unitOfWork.RouletteRepository.Update(roulette);
+                    SetWinner(ChipColor.Green, greenBets, roulette, 14);
                 }
                 else if (midSum == blueBetsSum)
                 {
                     // blue winner
-                    var blueImage = await _unitOfWork.BetGlassRepository.GetAll().FirstAsync(x => x.ColorType == ChipColor.Blue);
-                    await AddWinChipAsync(ChipColor.Blue, blueImage.GlassImage);
-                    foreach (var bet in blueBets)
-                    {
-                        var user = _unitOfWork.UserRepository.GetAll().FirstAsync(x => x.Id == bet.UserAccountId).Result;
-                        user.Balance += bet.UserBet * 2;
-                        _unitOfWork.UserRepository.Update(user);
-                    }
-                    _unitOfWork.RouletteRepository.Update(roulette);
+                    SetWinner(ChipColor.Blue, blueBets, roulette, 2);
                 }
                 else if (midSum == yellowBetsSum)
                 {
                     // yellow winner
-                    var yellowImage = await _unitOfWork.BetGlassRepository.GetAll().FirstAsync(x => x.ColorType == ChipColor.Yellow);
-                    await AddWinChipAsync(ChipColor.Yellow, yellowImage.GlassImage);
-                    foreach (var bet in yellowBets)
-                    {
-                        var user = _unitOfWork.UserRepository.GetAll().First(x => x.Id == bet.UserAccountId);
-                        user.Balance += bet.UserBet * 2;
-                        _unitOfWork.UserRepository.Update(user);
-                    }
-                    _unitOfWork.RouletteRepository.Update(roulette);
+                    SetWinner(ChipColor.Yellow, yellowBets, roulette, 2);
                 }
             }
-            await ClearBetsAsync(); // string builder
-            _logger.LogInformation($"This spin was successfull");
-            _logger.LogInformation($"-----------------------------------------");
-            _logger.LogInformation($"blueBets.Count :\t{blueBets.Count}");
-            _logger.LogInformation($"greenBets.Count :\t{greenBets.Count}");
-            _logger.LogInformation($"yellowBets.Count :\t{yellowBets.Count}");
-            _logger.LogInformation($"-----------------------------------------");
-            _logger.LogInformation($"dbBets.Count :\t{dbBets.Count()}");
-            _logger.LogInformation($"-----------------------------------------");
+            ClearBets(); // string builder
             _unitOfWork.Commit();
             return new BaseResponse<bool>()
             {
@@ -173,7 +107,7 @@ namespace DailySpin.Logic.Services
                 Description = "SuccessfullySpin"
             };
         }
-        private async Task ClearBetsAsync()
+        private void ClearBets()
         {
             var bets = _unitOfWork.BetRepository.GetAll();
             foreach (var bet in bets)
@@ -181,7 +115,7 @@ namespace DailySpin.Logic.Services
                 _unitOfWork.BetRepository.Delete(bet);
             }
         }
-        private async Task AddWinChipAsync(ChipColor chipColor, byte[] image)
+        private void AddWinChip(ChipColor chipColor, byte[] image)
         {
             Chip chip = new Chip
             {
@@ -191,6 +125,19 @@ namespace DailySpin.Logic.Services
                 WinChip = true
             };
             _unitOfWork.ChipRepository.Create(chip);
+        }
+        private void SetWinner(ChipColor color, List<Bet> coloredBets, Roulette roulette, ushort betMultiply)
+        {
+            var coloredImage = _unitOfWork.BetGlassRepository.GetAll().FirstAsync(x => x.ColorType == color).Result;
+            AddWinChip(color, coloredImage.GlassImage!);
+            foreach (var bet in coloredBets)
+            {
+                var user = _unitOfWork.UserRepository.GetAll().FirstAsync(x => x.Id == bet.UserAccountId).Result;
+                user.Balance += bet.UserBet * betMultiply;
+                roulette.Balance -= bet.UserBet * betMultiply;
+                _unitOfWork.UserRepository.Update(user);
+            }
+            _unitOfWork.RouletteRepository.Update(roulette);
         }
     }
 }

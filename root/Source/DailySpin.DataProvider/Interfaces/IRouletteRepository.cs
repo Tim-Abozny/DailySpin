@@ -1,5 +1,4 @@
-﻿using DailySpin.DataProvider.Data;
-using DailySpin.DataProvider.Models;
+﻿using DailySpin.DataProvider.Models;
 
 namespace DailySpin.DataProvider.Interfaces
 {

@@ -135,11 +135,10 @@ namespace DailySpin.Logic.Services
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"[PlaceBet]: {ex.Message}");
                 return new BaseResponse<bool>()
                 {
                     Data = false,
-                    Description = ex.Message,
+                    Description = $"[PlaceBet]: FATAL ERROR - {ex.GetBaseException}",
                     StatusCode = StatusCode.InternalServerError
                 };
             }
@@ -161,11 +160,10 @@ namespace DailySpin.Logic.Services
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"[CreateGlasses]: {ex.Message}");
                 return new BaseResponse<bool>()
                 {
                     Data = false,
-                    Description = ex.Message,
+                    Description = $"[CreateGlasses]: FATAL ERROR - {ex.GetBaseException}",
                     StatusCode = StatusCode.InternalServerError
                 };
             }
