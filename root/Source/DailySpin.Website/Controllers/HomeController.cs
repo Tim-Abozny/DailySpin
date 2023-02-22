@@ -1,4 +1,5 @@
-﻿using DailySpin.ViewModel.ViewModels;
+﻿using DailySpin.Logic.Services;
+using DailySpin.ViewModel.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
@@ -7,9 +8,12 @@ namespace DailySpin.Website.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        private readonly PeriodicHostedService _periodicService;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ILogger<HomeController> logger,
+            PeriodicHostedService periodicService)
         {
+            _periodicService = periodicService;
             _logger = logger;
         }
 

@@ -5,6 +5,33 @@
     ViewData["Title"] = "Glasses Page";
 }
 
+@section scripts {
+        <script src="~/Scripts/jquery.signalR-2.4.2.min.js"></script>
+        <script src="~/signalr/hubs"></script>
+        <script>
+            $(function () {
+                    var rouletteHub = $.connection.betsHub;
+
+                    betsHub.client.updateBet = function (glassColor, bet, name) {
+                        // добавить код для обновления данных о ставке на странице
+                };
+
+                $.connection.hub.start().done(function () {
+                        // добавить код для обработки размещения ставки
+                    $('#placeBetButton').click(function () {
+                        var userId = $('#userIdInput').val();
+                        var amount = $('#amountInput').val();
+                        betsHub.server.placeBet(userId, amount);
+                    });
+                });
+            });
+        </script>
+}
+
+@section content {
+    // добавить код для отображения данных о ставке и формы для размещения ставки
+}
+
 <div class="page-glasses">
     <div style="font-size:23px; font-family:Aleo" class="text-danger text-center">@Model.Exception</div>
     @foreach (var glass in Model.ModelList)

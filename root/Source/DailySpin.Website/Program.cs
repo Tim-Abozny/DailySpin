@@ -1,5 +1,5 @@
 using DailySpin.DataProvider.Data;
-using DailySpin.Logic.Services;
+using DailySpin.Logic.Hubs;
 using DailySpin.Website;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
@@ -18,7 +18,7 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         options.LoginPath = new PathString("/Account/Login");
         options.AccessDeniedPath = new PathString("/Account/Login");
     });
-
+builder.Services.AddSignalR();
 builder.Services.InitializeRepositories();
 builder.Services.InitializeServices();
 
@@ -36,12 +36,12 @@ app.UseStaticFiles();
 app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
-
+app.MapHub<RouletteHub>("/roulette");
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
-app.MapGet("/", (
+/*app.MapGet("/", (
     PeriodicHostedService service) =>
 {
     return new PeriodicHostedServiceState(service.IsEnabled);
@@ -52,6 +52,6 @@ app.MapMethods("/", new[] { "PATCH" }, (
     PeriodicHostedService service) =>
 {
     service.IsEnabled = state.IsEnabled;
-});
+});*/
 
 app.Run();
