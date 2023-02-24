@@ -36,22 +36,9 @@ app.UseStaticFiles();
 app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
-app.MapHub<RouletteHub>("/roulette");
+app.MapHub<RouletteHub>("/BetsGlass");
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
-
-/*app.MapGet("/", (
-    PeriodicHostedService service) =>
-{
-    return new PeriodicHostedServiceState(service.IsEnabled);
-});
-
-app.MapMethods("/", new[] { "PATCH" }, (
-    PeriodicHostedServiceState state,
-    PeriodicHostedService service) =>
-{
-    service.IsEnabled = state.IsEnabled;
-});*/
 
 app.Run();

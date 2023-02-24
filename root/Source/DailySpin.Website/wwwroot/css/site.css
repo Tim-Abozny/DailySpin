@@ -173,6 +173,9 @@ div.bets-glass {
 div.page-glasses {
     display: flex;
 }
+div.bet-panel {
+    display: flex;
+}
 
 main.pb-3 {
     margin: 0 auto;

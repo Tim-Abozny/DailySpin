@@ -1,69 +1,87 @@
 ﻿@using DailySpin.ViewModel.ViewModels;
+@using DailySpin.Website.Enums;
 @model RouletteViewModel
 
 @{
     ViewData["Title"] = "Glasses Page";
 }
+<script src="js/signalr/dist/browser/signalr.min.js"></script>
+<script>
+    const hubConnection = new signalR.HubConnectionBuilder()
+            .withUrl("/BetsGlass")
+            .build();
+    // send data to server
+    document.getElementById("Blue b").addEventListener("click", function () {
+        
+        const bet = document.getElementById("bet").value;
+        hubConnection
+            .invoke("PlaceBetf", { "glasscolor": @ChipColor.Blue, "bet": parseInt(bet) })
+            .catch(function (err) {
+                return console.error(err.toString());
+        });
+    });
+    document.getElementById("Green b").addEventListener("click", function () {
 
-@section scripts {
-        <script src="~/Scripts/jquery.signalR-2.4.2.min.js"></script>
-        <script src="~/signalr/hubs"></script>
-        <script>
-            $(function () {
-                    var rouletteHub = $.connection.betsHub;
+        const bet = document.getElementById("bet").value;
+        hubConnection
+            .invoke("PlaceBetf", { "glasscolor": @ChipColor.Green, "bet": parseInt(bet) })
+            .catch(function (err) {
+                return console.error(err.toString());
+        });
+    });
+    document.getElementById("Yellow b").addEventListener("click", function () {
 
-                    betsHub.client.updateBet = function (glassColor, bet, name) {
-                        // добавить код для обновления данных о ставке на странице
-                };
+        const bet = document.getElementById("bet").value;
+        hubConnection
+            .invoke("PlaceBetf", { "glasscolor": @ChipColor.Yellow, "bet": parseInt(bet) })
+            .catch(function (err) {
+                return console.error(err.toString());
+        });
+    });
+    // accept data from server
+    hubConnection.on("PlaceBet", function (viewModel) {
+        let betElement = document.createElement("p");
+        let imgp = document.createElement("IMG");
+        let srcString = viewModel.UserImage;
+        imgp.src = $"data:image/png;base64, {srcString}"
+        betElement.textContent = viewModel.UserName;
+        betElement.textContent = viewModel.UserBet;
+        document.getElementById("Blue").appendChild(imgp);
+        document.getElementById("Blue").appendChild(betElement);
+    });
+    hubConnection.on("ReturnError", function (text) {
+        document.getElementById("errorlbl").innerText = `Error: ${text}`;
+    });
+    hubConnection.start()
+    .then(function () {
+        console.log("SignalR connected.");
+    })
+    .catch(function (err) {
+        return console.error(err.toString());
+    });
+    </script>
 
-                $.connection.hub.start().done(function () {
-                        // добавить код для обработки размещения ставки
-                    $('#placeBetButton').click(function () {
-                        var userId = $('#userIdInput').val();
-                        var amount = $('#amountInput').val();
-                        betsHub.server.placeBet(userId, amount);
-                    });
-                });
-            });
-        </script>
-}
-
-@section content {
-    // добавить код для отображения данных о ставке и формы для размещения ставки
-}
-
-<div class="page-glasses">
-    <div style="font-size:23px; font-family:Aleo" class="text-danger text-center">@Model.Exception</div>
-    @foreach (var glass in Model.ModelList)
-    {
-        <div class="bets-glass">
-            <form method="post" asp-controller="BetsGlass" asp-action="PlaceBet">
-                <div>
-                    <p>
-                        <div class="form-group">
-                            <input min="1" max="10000000" placeholder="Bet" class="form-control font-weight-bold text-center" type="number" name="bet" style="font-size:18px; font-family:Aleo">
-                        </div>
-                    </p>
-                </div>
-                <p>
-                    <input type="text" hidden value="@glass.ColorType" name="glassColor" class="betglass"/>
-                    <button class="betglass btn btn-link border-0">
-                        <img class="user-avatar" src="@string.Format("data:image/png;base64, {0}", Convert.ToBase64String(glass.GlassImage))"/> PLACE BET     WIN x @glass.BetMultiply
-                    </button>
-                </p>
-                <div class="bets">
-                    <p>
-                        @foreach (var bet in glass.Bets)
-                        {
-                            <p>
-                                <img class="user-avatar" src="@string.Format("data:image/png;base64, {0}", Convert.ToBase64String(bet.UserImage))"/>
-                                @bet.UserName -> 
-                                @bet.UserBet 💰
-                            </p>
-                        }
-                    </p>
-                </div>
-            </form>
-        </div>
-    }
+<div>
+    <div class="bet-panel">
+        <input placeholder="Enter bet amount ..." id="bet" min="1" max="10000000" class="form-control font-weight-bold text-center" type="number" name="bet" style="font-size:18px; font-family:Aleo">
+        <button></button>
+        <button></button>
+        <button></button>
+        <button></button>
+        <button></button>
+        <button></button>
+    </div>
+    <div>
+        <label id="errorlbl"></label>
+    </div>
+    <div class="page-glasses">
+        @foreach (var glass in Model.ModelList)
+        {
+            <div id="@glass.ColorType" class="betsglass">
+                <button id="@glass.ColorType b" class="betglass btn btn-link border-0">
+                    <img class="user-avatar" src="@string.Format("data:image/png;base64, {0}", Convert.ToBase64String(glass.GlassImage))"/> PLACE BET     WIN x @glass.BetMultiply
+                </button>
+            </div>
+        }
+    </div>
 </div>

@@ -35,10 +35,9 @@ namespace DailySpin.Logic.Services
                     _logger.LogInformation($"Executed PeriodicHostedService - Count: {_executionCount}");
 
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
-
-                    _logger.LogInformation($"Failed to execute PeriodicHostedService | {ex.GetBaseException()}.");
+                    _logger.LogInformation($"Failed to execute PeriodicHostedService.");
                 }
             }
         }
