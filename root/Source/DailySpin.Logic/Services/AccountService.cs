@@ -27,8 +27,8 @@ namespace DailySpin.Logic.Services
         {
             try
             {
-                var user = await _unitOfWork.UserRepository.GetAll().FirstAsync(x => x.Email == model.Email);
-                var userName = await _unitOfWork.UserRepository.GetAll().FirstAsync(x => x.DisplayName == model.Nickname);
+                var user = await _unitOfWork.UserRepository.GetAll().FirstOrDefaultAsync(x => x.Email == model.Email);
+                var userName = await _unitOfWork.UserRepository.GetAll().FirstOrDefaultAsync(x => x.DisplayName == model.Nickname);
                 if (user != null)
                 {
                     return new BaseResponse<ClaimsIdentity>()
@@ -81,7 +81,7 @@ namespace DailySpin.Logic.Services
         {
             try
             {
-                var user = await _unitOfWork.UserRepository.GetAll().FirstAsync(x => x.Email == model.Email);
+                var user = await _unitOfWork.UserRepository.GetAll().FirstOrDefaultAsync(x => x.Email == model.Email);
                 if (user == null)
                 {
                     return new BaseResponse<ClaimsIdentity>()

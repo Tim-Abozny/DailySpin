@@ -17,8 +17,16 @@ namespace DailySpin.Logic.Hubs
             _accountService = accountService;
         }
 
-        public async Task PlaceBetf(ChipColor glassColor, uint bet)
+        public async Task PlaceBetf(string color, uint bet)
         {
+            ChipColor glassColor;
+            if (color == "blue")
+                glassColor = ChipColor.Blue;
+            else if (color == "green")
+                glassColor = ChipColor.Green;
+            else
+                glassColor = ChipColor.Yellow;
+
             string name = Context.User.Identity.Name;
             var response = await _glassService.PlaceBet(glassColor, name, bet);
             if (response.Data == false)
