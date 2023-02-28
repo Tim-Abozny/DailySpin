@@ -155,7 +155,19 @@ button.betglass {
     text-decoration: none;
     margin-right: 15px;
 }
-
+img.betglass {
+    border-radius: 30px;
+    height: 40px;
+    width: 40px;
+    margin-right: 15px;
+}
+p.bet-right-side {
+    text-align: right;
+    text-shadow: 0 0 10px #DDE119;
+}
+div.betglass {
+    
+}
 button.betglass:hover {
     color: #262473;
     background-color: #D7DB02;

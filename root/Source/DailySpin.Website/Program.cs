@@ -1,5 +1,5 @@
 using DailySpin.DataProvider.Data;
-using DailySpin.Logic.Hubs;
+using DailySpin.Website.Hubs;
 using DailySpin.Website;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
@@ -18,7 +18,10 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         options.LoginPath = new PathString("/Account/Login");
         options.AccessDeniedPath = new PathString("/Account/Login");
     });
-builder.Services.AddSignalR();
+builder.Services.AddSignalR(options =>
+{
+    options.EnableDetailedErrors = true;
+});
 builder.Services.InitializeRepositories();
 builder.Services.InitializeServices();
 
@@ -36,9 +39,12 @@ app.UseStaticFiles();
 app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
-app.MapHub<RouletteHub>("/BetsGlass");
-app.MapControllerRoute(
-    name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapControllerRoute(
+        name: "default",
+        pattern: "{controller=Home}/{action=Index}/{id?}");
 
+    endpoints.MapHub<RouletteHub>("/hubs/roulette");
+});
 app.Run();

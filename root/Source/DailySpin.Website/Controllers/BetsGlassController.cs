@@ -1,5 +1,4 @@
-﻿using DailySpin.Logic.Hubs;
-using DailySpin.Logic.Interfaces;
+﻿using DailySpin.Logic.Interfaces;
 using DailySpin.ViewModel.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 

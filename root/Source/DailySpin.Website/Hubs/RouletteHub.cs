@@ -3,7 +3,7 @@ using DailySpin.ViewModel.ViewModels;
 using DailySpin.Website.Enums;
 using Microsoft.AspNetCore.SignalR;
 
-namespace DailySpin.Logic.Hubs
+namespace DailySpin.Website.Hubs
 {
     public class RouletteHub : Hub
     {
@@ -17,7 +17,7 @@ namespace DailySpin.Logic.Hubs
             _accountService = accountService;
         }
 
-        public async Task PlaceBetf(string color, uint bet)
+        public async Task PlaceBetf(string color, int bet)
         {
             ChipColor glassColor;
             if (color == "blue")
@@ -28,7 +28,7 @@ namespace DailySpin.Logic.Hubs
                 glassColor = ChipColor.Yellow;
 
             string name = Context.User.Identity.Name;
-            var response = await _glassService.PlaceBet(glassColor, name, bet);
+            var response = await _glassService.PlaceBet(glassColor, name, (uint)bet);
             if (response.Data == false)
             {
                 await Clients.Caller.SendAsync("ReturnError", response.Description);
@@ -36,11 +36,11 @@ namespace DailySpin.Logic.Hubs
             else
             {
                 BetViewModel viewModel = new BetViewModel();
-                viewModel.UserBet = bet;
+                viewModel.UserBet = (uint)bet;
                 viewModel.UserName = name;
                 viewModel.UserImage = _accountService.LoadUserData(name).Result.Data.UserImage;
 
-                await Clients.All.SendAsync("PlaceBet", viewModel);
+                await Clients.All.SendAsync("PlaceBet", viewModel, color);
             }
         }
     }

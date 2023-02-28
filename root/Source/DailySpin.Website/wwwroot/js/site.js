@@ -1,19 +1,29 @@
 ﻿"use strict";
-console.log("second line");
-var hubConnection = new signalR.HubConnectionBuilder().withUrl("/BetsGlass").build();
-console.log("after connect trying");
+var hubConnection = new signalR.HubConnectionBuilder().withUrl("/hubs/roulette").build();
 // accept data from server
-hubConnection.on("PlaceBet", function (viewModel) {
+hubConnection.on("PlaceBet", function (viewModel, color) {
+    let betContainer = document.createElement("div");
     let betElement = document.createElement("p");
+    let betElement2 = document.createElement("p");
+    betElement.className = "betglass";
     let imgp = document.createElement("IMG");
-    let srcString = viewModel.UserImage;
-    imgp.src = "data:image/png;base64${srcString}"
-    betElement.textContent = viewModel.UserName;
-    betElement.textContent = viewModel.UserBet;
-    document.getElementById("Blue").appendChild(imgp);
-    document.getElementById("Blue").appendChild(betElement);
+    imgp.src = `data:image/png;base64,${viewModel.userImage}`;
+    imgp.className = "betglass";
+    betElement.textContent = viewModel.userName;
+    betElement2.textContent = viewModel.userBet;
+    betElement2.className = "bet-right-side";
+    betContainer.append(imgp, betElement, betElement2);
+    betContainer.className = "betglass"
+    if (color == "blue") {
+        document.getElementById("Blue").appendChild(betContainer);
+    }
+    else if (color == "green") {
+        document.getElementById("Green").appendChild(betContainer);
+    }
+    else {
+        document.getElementById("Yellow").appendChild(betContainer);
+    }
 });
-console.log("after on");
 hubConnection.on("ReturnError", function (text) {
     document.getElementById("errorlbl").innerText = `Error: ${text}`;
 });
@@ -28,7 +38,7 @@ hubConnection.start().then(function () {
 document.getElementById("Blue b").addEventListener("click", function () {
 
     const bet = document.getElementById("bet").value;
-    hubConnection.invoke("PlaceBetf", { "glasscolor": "blue", "bet": parseInt(bet) }).catch(function (err) {
+    hubConnection.invoke("PlaceBetf", "blue", +bet).catch(function (err) {
             return console.error(err.toString());
         });
     return true;
@@ -36,7 +46,7 @@ document.getElementById("Blue b").addEventListener("click", function () {
 document.getElementById("Green b").addEventListener("click", function () {
 
     const bet = document.getElementById("bet").value;
-    hubConnection.invoke("PlaceBetf", { "glasscolor": "green", "bet": parseInt(bet) }).catch(function (err) {
+    hubConnection.invoke("PlaceBetf", "green", +bet).catch(function (err) {
             return console.error(err.toString());
         });
     return true;
@@ -44,7 +54,7 @@ document.getElementById("Green b").addEventListener("click", function () {
 document.getElementById("Yellow b").addEventListener("click", function () {
 
     const bet = document.getElementById("bet").value;
-    hubConnection.invoke("PlaceBetf", { "glasscolor": "yellow", "bet": parseInt(bet) }).catch(function (err) {
+    hubConnection.invoke("PlaceBetf", "yellow", +bet).catch(function (err) {
             return console.error(err.toString());
         });
     return true;

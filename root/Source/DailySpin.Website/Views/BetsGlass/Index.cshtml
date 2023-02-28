@@ -1,28 +1,34 @@
-﻿@page
-    <script src="~/js/site.js"></script>
-    <script src="~/js/signalr/dist/browser/signalr.js"></script>
+﻿@using DailySpin.ViewModel.ViewModels;
+@using DailySpin.Website.Enums;
+@model RouletteViewModel
 
+@{
+    ViewData["Title"] = "Glasses Page";
+}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/6.0.6/signalr.js"></script>
+<script src="~/js/site.js"></script>
+
+<div>
+    <div class="bet-panel">
+        <input placeholder="Enter bet amount ..." id="bet" min="1" max="10000000" class="form-control font-weight-bold text-center" type="number" name="bet" style="font-size:18px; font-family:Aleo">
+        <button></button>
+        <button></button>
+        <button></button>
+        <button></button>
+        <button></button>
+        <button></button>
+    </div>
     <div>
-        <div class="bet-panel">
-            <input placeholder="Enter bet amount ..." id="bet" min="1" max="10000000" class="form-control font-weight-bold text-center" type="number" name="bet" style="font-size:18px; font-family:Aleo">
-            <button></button>
-            <button></button>
-            <button></button>
-            <button></button>
-            <button></button>
-            <button></button>
-        </div>
-        <div>
-            <label id="errorlbl"></label>
-        </div>
-        <div class="page-glasses">
-            @*@foreach (var glass in Model.ModelList)
-            {
+        <label id="errorlbl"></label>
+    </div>
+    <div class="page-glasses">
+        @foreach (var glass in Model.ModelList)
+        {
                 <div id="@glass.ColorType" class="betsglass">
                     <button id="@glass.ColorType b" class="betglass btn btn-link border-0">
                         <img class="user-avatar" src="@string.Format("data:image/png;base64, {0}", Convert.ToBase64String(glass.GlassImage))"/> PLACE BET     WIN x @glass.BetMultiply
                     </button>
                 </div>
-            }*@
-        </div>
+        }
     </div>
+</div>
