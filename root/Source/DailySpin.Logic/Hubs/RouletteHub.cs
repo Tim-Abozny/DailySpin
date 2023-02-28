@@ -3,7 +3,7 @@ using DailySpin.ViewModel.ViewModels;
 using DailySpin.Website.Enums;
 using Microsoft.AspNetCore.SignalR;
 
-namespace DailySpin.Website.Hubs
+namespace DailySpin.Logic.Hubs
 {
     public class RouletteHub : Hub
     {
@@ -40,8 +40,12 @@ namespace DailySpin.Website.Hubs
                 viewModel.UserName = name;
                 viewModel.UserImage = _accountService.LoadUserData(name).Result.Data.UserImage;
 
-                await Clients.All.SendAsync("PlaceBet", viewModel, color);
+                await Clients.Others.SendAsync("PlaceBet", viewModel, color);
             }
+        }
+        public async Task Spin()
+        {
+
         }
     }
 }

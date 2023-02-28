@@ -1,5 +1,5 @@
 using DailySpin.DataProvider.Data;
-using DailySpin.Website.Hubs;
+using DailySpin.Logic.Hubs;
 using DailySpin.Website;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;

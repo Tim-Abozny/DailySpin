@@ -24,6 +24,23 @@ hubConnection.on("PlaceBet", function (viewModel, color) {
         document.getElementById("Yellow").appendChild(betContainer);
     }
 });
+hubConnection.on("Spin", function () {
+    let countB = document.getElementById("Blue").childNodes.length;
+    let countG = document.getElementById("Green").childNodes.length;
+    let countY = document.getElementById("Yellow").childNodes.length;
+    while (countB > 0) {
+        document.getElementById("Blue").firstChild.remove();
+        countB--;
+    }
+    while (countG > 0) {
+        document.getElementById("Green").firstChild.remove();
+        countG--;
+    }
+    while (countY > 0) {
+        document.getElementById("Yellow").firstChild.remove();
+        countY--;
+    }
+})
 hubConnection.on("ReturnError", function (text) {
     document.getElementById("errorlbl").innerText = `Error: ${text}`;
 });
