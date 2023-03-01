@@ -47,6 +47,7 @@ hubConnection.on("Spin", function () {
 })
 hubConnection.on("ReturnError", function (text) {
     document.getElementById("errorlbl").innerText = `Error: ${text}`;
+    displayError(true);
 });
 
 hubConnection.start().then(function () {
@@ -61,7 +62,8 @@ document.getElementById("Blue b").addEventListener("click", function () {
     const bet = document.getElementById("bet").value;
     hubConnection.invoke("PlaceBetf", "blue", +bet).catch(function (err) {
             return console.error(err.toString());
-        });
+    });
+    displayError(false);
     return true;
 });
 document.getElementById("Green b").addEventListener("click", function () {
@@ -70,6 +72,7 @@ document.getElementById("Green b").addEventListener("click", function () {
     hubConnection.invoke("PlaceBetf", "green", +bet).catch(function (err) {
             return console.error(err.toString());
         });
+    displayError(false);
     return true;
 });
 document.getElementById("Yellow b").addEventListener("click", function () {
@@ -78,6 +81,7 @@ document.getElementById("Yellow b").addEventListener("click", function () {
     hubConnection.invoke("PlaceBetf", "yellow", +bet).catch(function (err) {
             return console.error(err.toString());
         });
+    displayError(false);
     return true;
 });
 //vanila functions
@@ -106,4 +110,12 @@ function plus(value) {
     }
     number += value;
     document.getElementById("bet").value = number;
+}
+function displayError(enable) {
+    var x = document.getElementById("errorlbl");
+    if (enable === true) {
+        x.style.display = "block";
+    } else {
+        x.style.display = "none";
+    }
 }
