@@ -5,15 +5,19 @@ hubConnection.on("PlaceBet", function (viewModel, color) {
     let betContainer = document.createElement("div");
     let betElement = document.createElement("p");
     let betElement2 = document.createElement("p");
-    betElement.className = "betglass";
+    betElement.className = "bet-list";
     let imgp = document.createElement("IMG");
+
     imgp.src = `data:image/png;base64,${viewModel.userImage}`;
     imgp.className = "betglass";
+
     betElement.textContent = viewModel.userName;
     betElement2.textContent = viewModel.userBet;
     betElement2.className = "bet-right-side";
+
     betContainer.append(imgp, betElement, betElement2);
-    betContainer.className = "betglass"
+    betContainer.className = "bet-list"
+
     if (color == "blue") {
         document.getElementById("Blue").appendChild(betContainer);
     }
@@ -76,5 +80,30 @@ document.getElementById("Yellow b").addEventListener("click", function () {
         });
     return true;
 });
-
-
+//vanila functions
+document.getElementById("Clear").addEventListener("click", function clear() {
+    document.getElementById("bet").value = 0;
+});
+document.getElementById("+1").addEventListener("click", function plus1() {
+    plus(1);
+});
+document.getElementById("+10").addEventListener("click", function plus10() {
+    plus(10);
+});
+document.getElementById("+100").addEventListener("click", function plus100() {
+    plus(100);
+});
+document.getElementById("+1000").addEventListener("click", function plus1000() {
+    plus(1000);
+});
+document.getElementById("MAX").addEventListener("click", function plusMax() {
+    plus(0);
+});
+function plus(value) {
+    let number = parseInt(document.getElementById("bet").value);
+    if (isNaN(number)) {
+        number = 0;
+    }
+    number += value;
+    document.getElementById("bet").value = number;
+}

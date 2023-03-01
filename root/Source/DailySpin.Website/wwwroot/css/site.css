@@ -164,10 +164,10 @@ img.betglass {
 p.bet-right-side {
     text-align: right;
     text-shadow: 0 0 10px #DDE119;
+    display: inline-block;
+    margin-left: 150px;
 }
-div.betglass {
-    
-}
+
 button.betglass:hover {
     color: #262473;
     background-color: #D7DB02;
@@ -184,6 +184,7 @@ div.bets-glass {
 
 div.page-glasses {
     display: flex;
+
 }
 div.bet-panel {
     display: flex;
@@ -198,4 +199,72 @@ main.pb-3 {
 div.bets {
     margin-left: 15px;
     font-size: 18px;
+}
+
+button.panel-link {
+    color: #DDE119;
+    background-color: #2C2B4D;
+    border-radius: 15px;
+    font-weight: 600;
+    font-size: 15px;
+    letter-spacing: 1px;
+    margin-right: 10px;
+    margin-top: auto;
+    margin-bottom: auto;
+}
+
+button.panel-link:hover {
+    color: #2C2B4D;
+    background-color: #DDE119;
+}
+
+button.panel-link:focus {
+    box-shadow: 0 0 10px #DDE119;
+}
+.bet-input {
+    border: 0px;
+    text-align: left;
+    margin-right: 15px;
+    margin-left: 5px;
+    border-radius: 15px;
+    inline-size: 400px;
+    vertical-align: central;
+}
+.bet-input:focus {
+    box-shadow: 0 0 10px #DDE119;
+    border: 1px solid #DDE119;
+    text-align: left;
+    margin-right: 15px;
+    inline-size: 400px;
+}
+.bet-input:hover {
+    box-shadow: 0 0 10px #DDE119;
+    text-align: left;
+    margin-right: 15px;
+    inline-size: 400px;
+}
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+.error-label {
+    margin-top: 15px;
+    margin-bottom: 5px;
+    font-style: italic;
+    font-family: 'Roboto Mono', monospace;
+    text-align: center;
+    display: none;
+}
+.bet-panel-background {
+    background-color: #1E1E33;
+    text-align: center;
+    border-radius: 15px;
+    display: inline-block;
+    margin: 0 auto;
+    padding: 3px;
+    margin-left: 200px;
+}
+p.bet-list {
+    display: inline-block;
 }

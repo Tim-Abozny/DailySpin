@@ -8,29 +8,36 @@
 <script src="~/js/site.js"></script>
 
 <div>
-    <div class="bet-panel">
-        <input placeholder="Enter bet amount ..." id="bet" min="1" max="10000000" class="form-control font-weight-bold text-center" type="number" name="bet" style="font-size:18px; font-family:Aleo">
-        <button></button>
-        <button></button>
-        <button></button>
-        <button></button>
-        <button></button>
-        <button></button>
-    </div>
-    <div>
-        <label id="errorlbl"></label>
+    <div class="bet-panel-background">
+        <div class="bet-panel">
+            <input placeholder="Enter bet amount ..." id="bet" min="1" max="10000000" class="bet-input form-control font-weight-bold" type="number" name="bet" style="font-size:18px; font-family:Aleo">
+            <button id="Clear" class="panel-link btn border-0">Clear</button>
+            <button id="+1" class="panel-link btn border-0">+1</button>
+            <button id="+10" class="panel-link btn border-0">+10</button>
+            <button id="+100" class="panel-link btn border-0">+100</button>
+            <button id="+1000" class="panel-link btn border-0">+1000</button>
+            <button id="MAX" class="panel-link btn border-0">MAX</button>
+        </div>
+        <div>
+            <label class="error-label" id="errorlbl"></label>
+        </div>
     </div>
     <div class="page-glasses">
-        @foreach (var glass in Model.ModelList)
-        {
-                <div class="betsglass">
-                    <button id="@glass.ColorType b" class="betglass btn btn-link border-0">
-                        <img class="user-avatar" src="@string.Format("data:image/png;base64, {0}", Convert.ToBase64String(glass.GlassImage))"/> PLACE BET     WIN x @glass.BetMultiply
-                    </button>
+            @foreach (var glass in Model.ModelList)
+            {
+                <div class="bets-glass">
+                    <p>
+                        <button id="@glass.ColorType b" class="betglass btn btn-link border-0">
+                            <img class="user-avatar" src="@string.Format("data:image/png;base64, {0}", Convert.ToBase64String(glass.GlassImage))"/> PLACE BET     WIN x @glass.BetMultiply
+                        </button>
+                    </p>
+                    <div class="bets">
+                        <p>
+                            <p id="@glass.ColorType"></p>
+                        </p>
+                    </div>
                 </div>
-                <div id="@glass.ColorType">
+            }
 
-                </div>
-        }
-    </div>
+     </div>   
 </div>
