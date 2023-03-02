@@ -19,8 +19,9 @@ namespace DailySpin.Logic.Services
             _unitOfWork = unitOfWork;
             _logger = logger;
         }
-        public async Task<BaseResponse<bool>> RunAsync()
+        public async Task<BaseResponse<string>> RunAsync()
         {
+            string result = "";
             var dbBets = _unitOfWork.BetRepository.GetAll();
             var dbGlasses = _unitOfWork.BetGlassRepository.GetAll();
             Guid colorBlueID = Guid.Empty;
@@ -47,9 +48,10 @@ namespace DailySpin.Logic.Services
 
             if (blueBets.Count == 0 && greenBets.Count == 0 && yellowBets.Count == 0)
             {
-                return new BaseResponse<bool>()
+                result = "empty";
+                return new BaseResponse<string>()
                 {
-                    Data = true,
+                    Data = result,
                     StatusCode = DataProvider.Enums.StatusCode.OK,
                     Description = "EmptySpin",
                 };
@@ -68,16 +70,19 @@ namespace DailySpin.Logic.Services
                 {
                     // green winner
                     SetWinner(ChipColor.Green, greenBets, roulette, 14);
+                    result = "green";
                 }
                 else if (minSum == blueBetsSum)
                 {
                     // blue winner
                     SetWinner(ChipColor.Blue, blueBets, roulette, 2);
+                    result = "blue";
                 }
                 else
                 {
                     // yellow winner
                     SetWinner(ChipColor.Yellow, yellowBets, roulette, 2);
+                    result = "yellow";
                 }
             }
             else
@@ -86,23 +91,26 @@ namespace DailySpin.Logic.Services
                 {
                     // green winner
                     SetWinner(ChipColor.Green, greenBets, roulette, 14);
+                    result = "green";
                 }
                 else if (midSum == blueBetsSum)
                 {
                     // blue winner
                     SetWinner(ChipColor.Blue, blueBets, roulette, 2);
+                    result = "blue";
                 }
                 else if (midSum == yellowBetsSum)
                 {
                     // yellow winner
                     SetWinner(ChipColor.Yellow, yellowBets, roulette, 2);
+                    result = "yellow";
                 }
             }
             ClearBets(); // string builder
             _unitOfWork.Commit();
-            return new BaseResponse<bool>()
+            return new BaseResponse<string>()
             {
-                Data = true,
+                Data = result,
                 StatusCode = DataProvider.Enums.StatusCode.OK,
                 Description = "SuccessfullySpin"
             };

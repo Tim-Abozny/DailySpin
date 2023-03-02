@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace DailySpin.Website.Views.Shared.Components
 {
-    public class LoginedUserData : ViewComponent
+    public class LoginedUserBalance : ViewComponent
     {
         public string Invoke()
         {
@@ -15,7 +15,8 @@ namespace DailySpin.Website.Views.Shared.Components
             if (request.Result.Data == null)
                 return "NEED TO LOG IN";
             BetViewModel model = request.Result.Data;
-            return $"{model.UserName} | ";
+            return $"{model.UserBalance}";
         }
     }
 }
+// 💰

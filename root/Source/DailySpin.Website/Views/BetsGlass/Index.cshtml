@@ -6,9 +6,21 @@
 }
 <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/6.0.6/signalr.js"></script>
 <script src="~/js/site.js"></script>
+<script>
+    let balance = @await Component.InvokeAsync("LoginedUserBalance");
+    document.getElementById("balance").value = balance;
+</script>
 
 <div>
+    <div>
+        <label class="error-label" id="result"></label>
+    </div>
+    <div id="timer">
+        <span id="seconds"></span>
+    </div>
+    <br />
     <div class="bet-panel-background">
+        
         <div class="bet-panel">
             <input placeholder="Enter bet amount ..." id="bet" min="1" max="10000000" class="bet-input form-control font-weight-bold" type="number" name="bet" style="font-size:18px; font-family:Aleo">
             <button id="Clear" class="panel-link btn border-0">Clear</button>

@@ -9,8 +9,14 @@
     </li>
     <li class="nav-item">
         </li>
+        <li class="balance-user" id="name">
+            @await Component.InvokeAsync("LoginedUserData") Balance: 
+        </li>
+        <li class="balance-user" id="balance">
+            @await Component.InvokeAsync("LoginedUserBalance")
+        </li>
         <li class="balance-user">
-            @await Component.InvokeAsync("LoginedUserData")
+            💰
         </li>
             <img class="user-avatar" src="@await Component.InvokeAsync("LoadUserImage")"/>
         <li class="nav-item">

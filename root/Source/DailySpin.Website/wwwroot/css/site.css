@@ -268,3 +268,22 @@ input::-webkit-inner-spin-button {
 p.bet-list {
     display: inline-block;
 }
+#timer {
+    display: flex;
+    justify-content: center;
+    max-width: 60px; /* задаем максимальную ширину блока */
+    max-height:60px;
+    margin: 0 auto;
+    font-size: 2em;
+    font-weight: bold;
+    background-color: #1E1E33;
+    border-radius: 10px;
+    box-shadow: 0 0 10px #DDE119;
+    margin-bottom: 15px;
+}
+
+    #timer span {
+        padding: 5px 5px;
+        background-color: #1E1E33;
+        border-radius: 5px;
+    }

@@ -28,7 +28,20 @@ hubConnection.on("PlaceBet", function (viewModel, color) {
         document.getElementById("Yellow").appendChild(betContainer);
     }
 });
-hubConnection.on("Spin", function () {
+hubConnection.on("Spin", function (rl) {
+    displayResult(true);
+    if (rl === "blue") {
+        document.getElementById("result").innerText = "BLUE WON";
+}
+    else if (rl === "yellow") {
+        document.getElementById("result").innerText = "YELLOW WON";
+    }
+    else if (rl === "green") {
+        document.getElementById("result").innerText = "GREEN WON";
+    }
+    else {
+        document.getElementById("result").innerText = "EMPTY SPIN";
+    }
     let countB = document.getElementById("Blue").childNodes.length;
     let countG = document.getElementById("Green").childNodes.length;
     let countY = document.getElementById("Yellow").childNodes.length;
@@ -44,6 +57,7 @@ hubConnection.on("Spin", function () {
         document.getElementById("Yellow").firstChild.remove();
         countY--;
     }
+    startTimer()
 })
 hubConnection.on("ReturnError", function (text) {
     document.getElementById("errorlbl").innerText = `Error: ${text}`;
@@ -63,6 +77,12 @@ document.getElementById("Blue b").addEventListener("click", function () {
     hubConnection.invoke("PlaceBetf", "blue", +bet).catch(function (err) {
             return console.error(err.toString());
     });
+    let number = parseInt(document.getElementById("bet").value)
+    if (!isNaN(number)) {
+        let NewBalance = parseInt(document.getElementById("balance").value);
+        document.getElementById("balance").value = NewBalance - parseInt(bet);
+        document.getElementsByClassName('balance-user')[1].innerHTML = document.getElementById("balance").value;
+    }
     displayError(false);
     return true;
 });
@@ -71,7 +91,14 @@ document.getElementById("Green b").addEventListener("click", function () {
     const bet = document.getElementById("bet").value;
     hubConnection.invoke("PlaceBetf", "green", +bet).catch(function (err) {
             return console.error(err.toString());
-        });
+    });
+    let number = parseInt(document.getElementById("bet").value)
+    if (!isNaN(number)) {
+        let NewBalance = parseInt(document.getElementById("balance").value);
+        document.getElementById("balance").value = NewBalance - parseInt(bet);
+        document.getElementsByClassName('balance-user')[1].innerHTML = document.getElementById("balance").value;
+    }
+    
     displayError(false);
     return true;
 });
@@ -80,11 +107,18 @@ document.getElementById("Yellow b").addEventListener("click", function () {
     const bet = document.getElementById("bet").value;
     hubConnection.invoke("PlaceBetf", "yellow", +bet).catch(function (err) {
             return console.error(err.toString());
-        });
+    });
+    let number = parseInt(document.getElementById("bet").value)
+    if (!isNaN(number)) {
+        let NewBalance = parseInt(document.getElementById("balance").value);
+        document.getElementById("balance").value = NewBalance - parseInt(bet);
+        document.getElementsByClassName('balance-user')[1].innerHTML = document.getElementById("balance").value;
+    }
     displayError(false);
     return true;
 });
 //vanila functions
+//bet panel
 document.getElementById("Clear").addEventListener("click", function clear() {
     document.getElementById("bet").value = 0;
 });
@@ -111,6 +145,7 @@ function plus(value) {
     number += value;
     document.getElementById("bet").value = number;
 }
+//error
 function displayError(enable) {
     var x = document.getElementById("errorlbl");
     if (enable === true) {
@@ -118,4 +153,45 @@ function displayError(enable) {
     } else {
         x.style.display = "none";
     }
+}
+//result
+function displayResult(enable) {
+    var x = document.getElementById("result");
+    if (enable === true) {
+        x.style.display = "block";
+    } else {
+        x.style.display = "none";
+    }
+}
+//timer
+function countdown(endtime) {
+    var secondsSpan = document.getElementById("seconds");
+
+    function updateClock() {
+        var t = getTimeRemaining(endtime);
+
+        secondsSpan.innerHTML = ("0" + t.seconds).slice(-2);
+
+        if (t.total <= 0) {
+            clearInterval(timeinterval);
+        }
+    }
+
+    updateClock();
+    var timeinterval = setInterval(updateClock, 1000);
+}
+
+function getTimeRemaining(endtime) {
+    var total = Date.parse(endtime) - Date.parse(new Date());
+    var seconds = Math.floor((total / 1000) % 60);
+
+    return {
+        total: total,
+        seconds: seconds,
+    };
+}
+
+function startTimer() {
+    var deadline = new Date(Date.parse(new Date()) + 15 * 1000); // 15 seconds from now
+    countdown(deadline);
 }

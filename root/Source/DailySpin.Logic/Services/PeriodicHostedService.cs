@@ -35,8 +35,8 @@ namespace DailySpin.Logic.Services
                 {
                     await using AsyncServiceScope asyncScope = _factory.CreateAsyncScope();
                     IRouletteService rouletteService = asyncScope.ServiceProvider.GetRequiredService<IRouletteService>();
-                    await rouletteService.RunAsync();
-                    await _rouletteHub.Clients.All.SendAsync("Spin");
+                    var rl = await rouletteService.RunAsync();
+                    await _rouletteHub.Clients.All.SendAsync("Spin", rl.Data);
                     _executionCount++;
                     _logger.LogInformation($"Executed PeriodicHostedService - Count: {_executionCount}");
 
