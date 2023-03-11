@@ -28,11 +28,11 @@ builder.Services.InitializeServices();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (!app.Environment.IsDevelopment())
-{
+/*if (!app.Environment.IsDevelopment())
+{*/
     app.UseExceptionHandler("/Home/Error");
     app.UseHsts();
-}
+//}
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();

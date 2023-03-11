@@ -80,93 +80,71 @@ namespace DailySpin.Logic.Services
         }
         public async Task<BaseResponse<bool>> PlaceBet(ChipColor glassColor, string loginedUsername, uint bet)
         {
-            try
-            {
-                var user = await _unitOfWork.UserRepository.GetAll().FirstAsync(x => x.DisplayName == loginedUsername);
-                if (bet > user.Balance || bet < 1)
-                {
-                    return new BaseResponse<bool>()
-                    {
-                        Data = false,
-                        Description = "Bet higher then balance or lower then 1",
-                        StatusCode = StatusCode.InternalServerError
-                    };
-                }
 
-                var glass = await _unitOfWork.BetGlassRepository.GetAll().FirstAsync(x => x.ColorType == glassColor);
-                var roulette = await _unitOfWork.RouletteRepository.GetAll().FirstAsync();
-                if (roulette == null)
-                {
-                    Roulette dbRoulette = new Roulette();
-                    dbRoulette.Id = Guid.NewGuid();
-                    dbRoulette.Balance = bet;
-                    _unitOfWork.RouletteRepository.Create(dbRoulette);
-                }
-                else
-                {
-                    roulette.Balance += bet;
-                    _unitOfWork.RouletteRepository.Update(roulette);
-                }
-                user.Balance -= bet;
-                _unitOfWork.UserRepository.Update(user);
-                Bet dbBet = new Bet
-                {
-                    Id = Guid.NewGuid(),
-                    UserAccountId = user.Id,
-                    UserBet = bet,
-                    UserImage = user.Image!,
-                    UserName = user.DisplayName,
-                    BetsGlassId = glass.Id
-                };
-                _unitOfWork.BetRepository.Create(dbBet);
-
-                if (glass.Bets == null)
-                    glass.Bets = new List<Bet>();
-                glass.Bets.Add(dbBet);
-                _unitOfWork.BetGlassRepository.Update(glass);
-                _unitOfWork.Commit();
-
-                return new BaseResponse<bool>()
-                {
-                    Data = true,
-                    StatusCode = StatusCode.OK,
-                    Description = "Glasses has been created!"
-                };
-            }
-            catch (Exception ex)
+            var user = await _unitOfWork.UserRepository.GetAll().FirstAsync(x => x.DisplayName == loginedUsername);
+            if (bet > user.Balance || bet < 1)
             {
                 return new BaseResponse<bool>()
                 {
                     Data = false,
-                    Description = $"[PlaceBet]: FATAL ERROR - {ex.GetBaseException}",
+                    Description = "Bet higher then balance or lower then 1",
                     StatusCode = StatusCode.InternalServerError
                 };
             }
+
+            var glass = await _unitOfWork.BetGlassRepository.GetAll().FirstAsync(x => x.ColorType == glassColor);
+            var roulette = await _unitOfWork.RouletteRepository.GetAll().FirstAsync();
+            if (roulette == null)
+            {
+                Roulette dbRoulette = new Roulette();
+                dbRoulette.Id = Guid.NewGuid();
+                dbRoulette.Balance = bet;
+                _unitOfWork.RouletteRepository.Create(dbRoulette);
+            }
+            else
+            {
+                roulette.Balance += bet;
+                _unitOfWork.RouletteRepository.Update(roulette);
+            }
+            user.Balance -= bet;
+            _unitOfWork.UserRepository.Update(user);
+            Bet dbBet = new Bet
+            {
+                Id = Guid.NewGuid(),
+                UserAccountId = user.Id,
+                UserBet = bet,
+                UserImage = user.Image!,
+                UserName = user.DisplayName,
+                BetsGlassId = glass.Id
+            };
+            _unitOfWork.BetRepository.Create(dbBet);
+
+            if (glass.Bets == null)
+                glass.Bets = new List<Bet>();
+            glass.Bets.Add(dbBet);
+            _unitOfWork.BetGlassRepository.Update(glass);
+            _unitOfWork.Commit();
+
+            return new BaseResponse<bool>()
+            {
+                Data = true,
+                StatusCode = StatusCode.OK,
+                Description = "Glasses has been created!"
+            };
         }
         public BaseResponse<bool> CreateGlasses()
         {
-            try
+
+            CreateGlass("blue", 2, ChipColor.Blue);
+            CreateGlass("green", 14, ChipColor.Green);
+            CreateGlass("yellow", 2, ChipColor.Yellow);
+            _unitOfWork.Commit();
+            return new BaseResponse<bool>()
             {
-                CreateGlass("blue", 2, ChipColor.Blue);
-                CreateGlass("green", 14, ChipColor.Green);
-                CreateGlass("yellow", 2, ChipColor.Yellow);
-                _unitOfWork.Commit();
-                return new BaseResponse<bool>()
-                {
-                    Data = true,
-                    StatusCode = StatusCode.OK,
-                    Description = "Glasses has been created!"
-                };
-            }
-            catch (Exception ex)
-            {
-                return new BaseResponse<bool>()
-                {
-                    Data = false,
-                    Description = $"[CreateGlasses]: FATAL ERROR - {ex.GetBaseException}",
-                    StatusCode = StatusCode.InternalServerError
-                };
-            }
+                Data = true,
+                StatusCode = StatusCode.OK,
+                Description = "Glasses has been created!"
+            };
         }
         private byte[] GetImage(string imgColor)
         {

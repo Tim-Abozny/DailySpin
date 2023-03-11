@@ -18,7 +18,8 @@ namespace DailySpin.Website.Controllers
 
         [HttpGet]
         public IActionResult Register() => View();
-
+        
+        [RequestSizeLimit(3000000)]
         [HttpPost]
         public async Task<IActionResult> Register(RegisterViewModel model)
         {

@@ -8,6 +8,10 @@ namespace DailySpin.Website.Views.Shared.Components
     {
         public string Invoke()
         {
+            if (HttpContext.User.Identity.Name == null)
+            {
+                return "PLEASE LOG IN";
+            }
             var request = HttpContext.RequestServices.
                 GetService<IAccountService>()
                 .LoadUserData(HttpContext.User.Identity.Name);

@@ -1,5 +1,5 @@
 header {
-    background-color: #06060f;
+    background-color: #030315;
 }
 
 html {
@@ -26,6 +26,7 @@ body {
     margin-bottom: 60px;
     background-color: #0c111d;
     font-family: "Aleo";
+    background: #0C111D;
 }
 
 main {
@@ -282,8 +283,8 @@ p.bet-list {
     margin-bottom: 15px;
 }
 
-    #timer span {
-        padding: 5px 5px;
-        background-color: #1E1E33;
-        border-radius: 5px;
-    }
+#timer span {
+    padding: 5px 5px;
+    background-color: #1E1E33;
+    border-radius: 5px;
+}

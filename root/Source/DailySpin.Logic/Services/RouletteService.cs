@@ -64,7 +64,7 @@ namespace DailySpin.Logic.Services
             ulong maxSum = Math.Max(blueBetsSum, Math.Max(greenBetsSum, yellowBetsSum));
             ulong midSum = greenBetsSum + yellowBetsSum + blueBetsSum - maxSum - minSum;
 
-            if (midSum - minSum >= minSum / 20) // !(5%) difference between bets
+            if (midSum - minSum >= midSum / 4)
             {
                 if (minSum == greenBetsSum)
                 {
