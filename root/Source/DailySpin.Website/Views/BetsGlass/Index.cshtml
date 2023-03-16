@@ -4,10 +4,12 @@
 @{
     ViewData["Title"] = "Glasses Page";
 }
-<script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/6.0.6/signalr.js"></script>
+@*<script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/6.0.6/signalr.js"></script>*@
+<script src="js/signalr/dist/browser/signalr.min.js"></script>
 <script>
     let balance = @await Component.InvokeAsync("LoginedUserBalance");
     document.getElementById("balance").value = balance;
+
 </script>
 
 <div>
@@ -60,3 +62,4 @@
 
      </div>   
 </div>
+<script src="~/js/site.js" asp-append-version="true"></script>

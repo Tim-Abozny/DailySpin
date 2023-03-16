@@ -2,6 +2,7 @@
 using DailySpin.ViewModel.ViewModels;
 using DailySpin.Website.Enums;
 using Microsoft.AspNetCore.SignalR;
+using System.Security.Cryptography;
 
 namespace DailySpin.Logic.Hubs
 {
@@ -9,7 +10,12 @@ namespace DailySpin.Logic.Hubs
     {
         private readonly IBetsGlassService _glassService;
         private readonly IAccountService _accountService;
-
+        private static readonly List<Item> Items = new List<Item>
+        {
+            new Item { Name = "GreenChip", Image = "img/greenChip.png", Chance = 2 },
+            new Item { Name = "YellowChip", Image = "img/yellowChip.png", Chance = 50 },
+            new Item { Name = "BlueChip", Image = "img/blueChip.png", Chance = 100 }
+        };
         public RouletteHub(IBetsGlassService glassService,
             IAccountService accountService)
         {
@@ -40,8 +46,28 @@ namespace DailySpin.Logic.Hubs
                 viewModel.UserName = name;
                 viewModel.UserImage = _accountService.LoadUserData(name).Result.Data.UserImage;
 
-                await Clients.Others.SendAsync("PlaceBet", viewModel, color);
+                await Clients.All.SendAsync("PlaceBet", viewModel, color);
             }
+        }
+        public async Task<Item> GetItem()
+        {
+            Item item = null;
+            RNGCryptoServiceProvider rng = new RNGCryptoServiceProvider();
+
+            while (item == null)
+            {
+                byte[] bytes = new byte[4];
+                rng.GetBytes(bytes);
+                int chance = Math.Abs(BitConverter.ToInt32(bytes, 0)) % 100;
+
+                foreach (var elm in Items)
+                {
+                    if (chance < elm.Chance && item == null)
+                        item = elm;
+                }
+            }
+
+            return item;
         }
         public async Task Spin()
         {
