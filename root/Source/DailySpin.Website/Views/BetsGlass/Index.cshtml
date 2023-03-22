@@ -4,13 +4,8 @@
 @{
     ViewData["Title"] = "Glasses Page";
 }
-@*<script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/6.0.6/signalr.js"></script>*@
-<script src="js/signalr/dist/browser/signalr.min.js"></script>
-<script>
-    let balance = @await Component.InvokeAsync("LoginedUserBalance");
-    document.getElementById("balance").value = balance;
 
-</script>
+<script src="js/signalr/dist/browser/signalr.min.js"></script>
 
 <div>
     <div class="animation">
@@ -28,21 +23,27 @@
         <span id="seconds"></span>
     </div>
     <br />
-    <div class="bet-panel-background">
+    <div class="my-sitebar">
+        <div id="navigate-panel" class="bet-panel-background">
         
-        <div class="bet-panel">
-            <input placeholder="Enter bet amount ..." id="bet" min="1" max="10000000" class="bet-input form-control font-weight-bold" type="number" name="bet" style="font-size:18px; font-family:Aleo">
-            <button id="Clear" class="panel-link btn border-0">Clear</button>
-            <button id="+1" class="panel-link btn border-0">+1</button>
-            <button id="+10" class="panel-link btn border-0">+10</button>
-            <button id="+100" class="panel-link btn border-0">+100</button>
-            <button id="+1000" class="panel-link btn border-0">+1000</button>
-            <button id="MAX" class="panel-link btn border-0">MAX</button>
-        </div>
-        <div>
+            <div class="bet-panel">
+                <button id="reloadBalance" class="panel-link btn border-0">↻</button>
+                <input placeholder="Enter bet amount ..." id="bet" min="1" max="10000000" class="bet-input form-control font-weight-bold" type="number" name="bet" style="font-size:18px; font-family:Aleo">
+                <button id="Clear" class="panel-link btn border-0">Clear</button>
+                <button id="+1" class="panel-link btn border-0">+1</button>
+                <button id="+10" class="panel-link btn border-0">+10</button>
+                <button id="+100" class="panel-link btn border-0">+100</button>
+                <button id="+1000" class="panel-link btn border-0">+1000</button>
+                <button id="MAX" class="panel-link btn border-0">MAX</button>
+            </div>
             <label class="error-label" id="errorlbl"></label>
         </div>
+        <div class="history-scope">
+            <ul class="history"></ul>
+        </div>
     </div>
+        </div>
+        <div>
     <div class="page-glasses">
             @foreach (var glass in Model.ModelList)
             {

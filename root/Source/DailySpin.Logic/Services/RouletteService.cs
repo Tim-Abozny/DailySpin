@@ -19,7 +19,7 @@ namespace DailySpin.Logic.Services
             _unitOfWork = unitOfWork;
             _logger = logger;
         }
-        public async Task<BaseResponse<string>> RunAsync()
+        public async Task<BaseResponse<string>> RunAsync(string winColor)
         {
             string result = "";
             var dbBets = _unitOfWork.BetRepository.GetAll();
@@ -46,68 +46,30 @@ namespace DailySpin.Logic.Services
             List<Bet> greenBets = dbBets.Where(x => x.BetsGlassId == colorGreenID).ToList();
             List<Bet> yellowBets = dbBets.Where(x => x.BetsGlassId == colorYellowID).ToList();
 
-            if (blueBets.Count == 0 && greenBets.Count == 0 && yellowBets.Count == 0)
-            {
-                result = "empty";
-                return new BaseResponse<string>()
-                {
-                    Data = result,
-                    StatusCode = DataProvider.Enums.StatusCode.OK,
-                    Description = "EmptySpin",
-                };
-            }
             var roulette = await _unitOfWork.RouletteRepository.GetAll().SingleAsync();
-            ulong blueBetsSum = (ulong)blueBets.Sum(x => x.UserBet) * 2;
-            ulong greenBetsSum = (ulong)greenBets.Sum(x => x.UserBet) * 14;
-            ulong yellowBetsSum = (ulong)yellowBets.Sum(x => x.UserBet) * 2;
-            ulong minSum = Math.Min(blueBetsSum, Math.Min(greenBetsSum, yellowBetsSum));
-            ulong maxSum = Math.Max(blueBetsSum, Math.Max(greenBetsSum, yellowBetsSum));
-            ulong midSum = greenBetsSum + yellowBetsSum + blueBetsSum - maxSum - minSum;
 
-            if (midSum - minSum >= midSum / 4)
+            if (winColor == "GreenChip")
             {
-                if (minSum == greenBetsSum)
-                {
-                    // green winner
-                    SetWinner(ChipColor.Green, greenBets, roulette, 14);
-                    result = "green";
-                }
-                else if (minSum == blueBetsSum)
-                {
-                    // blue winner
-                    SetWinner(ChipColor.Blue, blueBets, roulette, 2);
-                    result = "blue";
-                }
-                else
-                {
-                    // yellow winner
-                    SetWinner(ChipColor.Yellow, yellowBets, roulette, 2);
-                    result = "yellow";
-                }
+                // green winner
+                SetWinner(ChipColor.Green, greenBets, roulette, 14);
+                result = "green";
+            }
+            else if (winColor == "BlueChip")
+            {
+                // blue winner
+                SetWinner(ChipColor.Blue, blueBets, roulette, 2);
+                result = "blue";
             }
             else
             {
-                if (midSum == greenBetsSum)
-                {
-                    // green winner
-                    SetWinner(ChipColor.Green, greenBets, roulette, 14);
-                    result = "green";
-                }
-                else if (midSum == blueBetsSum)
-                {
-                    // blue winner
-                    SetWinner(ChipColor.Blue, blueBets, roulette, 2);
-                    result = "blue";
-                }
-                else if (midSum == yellowBetsSum)
-                {
-                    // yellow winner
-                    SetWinner(ChipColor.Yellow, yellowBets, roulette, 2);
-                    result = "yellow";
-                }
+                // yellow winner
+                SetWinner(ChipColor.Yellow, yellowBets, roulette, 2);
+                result = "yellow";
             }
             ClearBets(); // string builder
             _unitOfWork.Commit();
+
+            _logger.LogInformation("Roulette RunAsync method successfully completed");
             return new BaseResponse<string>()
             {
                 Data = result,
@@ -130,7 +92,8 @@ namespace DailySpin.Logic.Services
                 Id = Guid.NewGuid(),
                 ColorType = chipColor,
                 Image = image,
-                WinChip = true
+                WinChip = true,
+                Date = DateTime.Now
             };
             _unitOfWork.ChipRepository.Create(chip);
         }

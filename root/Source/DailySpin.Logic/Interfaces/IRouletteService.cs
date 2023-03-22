@@ -4,6 +4,6 @@ namespace DailySpin.Logic.Interfaces
 {
     public interface IRouletteService
     {
-        Task<BaseResponse<string>> RunAsync();
+        Task<BaseResponse<string>> RunAsync(string winColor);
     }
 }

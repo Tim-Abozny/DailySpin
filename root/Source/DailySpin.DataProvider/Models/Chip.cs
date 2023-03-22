@@ -10,5 +10,6 @@ namespace DailySpin.Website.Models
         public byte[] Image { get; set; }
         public ChipColor ColorType { get; set; }
         public bool WinChip { get; set; }
+        public DateTime Date { get; set; }
     }
 }
